@@ -30,12 +30,13 @@ public class ChatClientImplement implements ChatClientService {
             VectorStore vectorStore,
             VectorStoreConfig vectorStoreConfig,
             @Value("classpath:query/SystemPrompt.st") Resource systemPrompt,
-            @Value("classpath:query/RewriteQuery.st") Resource rewritePrompt
+            @Value("classpath:query/RewriteQuery.st") Resource rewritePrompt,
+            @Value("${chat.maxMessage}") int maxMessage
     ) {
         ChatMemory chatMemory = MessageWindowChatMemory
                 .builder()
                 .chatMemoryRepository(chatMemoryRepository)
-                .maxMessages(5)
+                .maxMessages(maxMessage)
                 .build();
 
         MessageChatMemoryAdvisor chatMemoryAdvisor = MessageChatMemoryAdvisor

@@ -10,3 +10,6 @@ vector:
   values:
     similarityThreshold: 0.60
     topK: 4
+
+chat:
+  maxMessage: 6

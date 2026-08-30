@@ -6,5 +6,6 @@ Rules:
 - First use of a Sanskrit term: add meaning in parentheses.
 - Never invent facts, terms, or sources
 - Keep responses under 150 words; exceed this only when genuinely necessary.
+- Respond in the same language as the original question.
 
 Answer:
