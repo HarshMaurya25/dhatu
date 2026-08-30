@@ -52,11 +52,11 @@ public class MultipartfileDataInputService implements DataInputService {
         documents = whitespaceCleanerTransformer.transform(documents);
         List<Document> splitdocument = splitterService.splitDocument(documents);
 
-//        this.vectorStore.add(splitdocument);
-        System.out.println("Length is " + splitdocument.size());
-        splitdocument.forEach(System.out::println);
+        this.vectorStore.add(splitdocument);
+//        System.out.println("Length is " + splitdocument.size());
+//        splitdocument.forEach(System.out::println);
 
-        return null;
+        return Boolean.TRUE;
     }
 
 }
