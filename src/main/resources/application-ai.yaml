@@ -1,0 +1,46 @@
+spring:
+  ai:
+    openai:
+      api-key: ${API_KEY}
+      base-url: "https://api.groq.com/openai/v1"
+      chat:
+        options:
+          model: openai/gpt-oss-120b
+      embedding:
+        enabled: false
+
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        embedding:
+          api-key: ${GEMINI_API_KEY}
+          text:
+            model: gemini-embedding-001
+            dimensions: 768
+
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 768
+        max-document-batch-size: 10000
+        initialize-schema: true
+
+logging:
+  level:
+    com.zaxxer.hikari: INFO
+    org.springframework.jdbc: INFO
+    org.springframework.ai.openai: DEBUG
+    com.openai: DEBUG
+    org:
+      springframework:
+        ai:
+          chat:
+            client:
+              advisor: INFO

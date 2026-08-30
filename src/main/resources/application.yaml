@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: dhatu
+
+  profiles:
+    active : database, ai, config
+
+server:
+  port: 8090
+
+admin:
+  code: "IKS2026-Project"
