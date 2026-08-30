@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Archive Administration — DHĀTU</title>
+  <meta name="description" content="Add verified reference documents to the DHĀTU knowledge base for the Research Assistant." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles/shared.css" />
+  <link rel="stylesheet" href="src/styles/admin.css" />
+</head>
+<body>
+
+<!-- ═══ NAV ══════════════════════════════════════════════════════ -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand" aria-label="DHĀTU — go to home">
+      <span class="nav-brand-name">DHĀTU</span>
+      <span class="nav-brand-sub">Ancient Indian Metallurgy</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#metallurgy">Metallurgy</a></li>
+      <li><a href="chat.html">Research Assistant</a></li>
+      <li><a href="admin.html" aria-current="page">Archive</a></li>
+    </ul>
+    <div class="nav-right">
+      <label for="nav-lang" class="sr-only">Language</label>
+      <select id="nav-lang" class="nav-lang lang-select" aria-label="Select language">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+        <option value="fr">Français</option>
+      </select>
+      <button class="nav-ham" id="nav-ham" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-drawer">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+<div id="nav-drawer" role="navigation" aria-label="Mobile navigation">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#metallurgy">Metallurgy</a></li>
+    <li><a href="chat.html">Research Assistant</a></li>
+    <li><a href="admin.html" aria-current="page">Archive Administration</a></li>
+  </ul>
+</div>
+
+<!-- ═══ ADMIN PAGE ════════════════════════════════════════════════ -->
+<div id="admin-page">
+
+  <!-- Page header -->
+  <div id="admin-header">
+    <div class="admin-header-inner">
+      <a href="index.html" class="admin-back-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        Return to Archive
+      </a>
+      <p class="admin-eyebrow">Archive Administration</p>
+      <h1 class="admin-title">Add a Source to the Archive</h1>
+      <p class="admin-subtitle">Upload a verified reference document to expand the knowledge available to the Research Assistant. All documents are processed and indexed into the RAG knowledge base.</p>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div id="admin-main">
+    <div class="admin-form-wrap">
+
+      <!-- Access code -->
+      <div class="field" id="field-code">
+        <label class="field-label" for="admin-code">Administrator Access Code</label>
+        <input
+          type="password"
+          id="admin-code"
+          name="admin-code"
+          inputmode="numeric"
+          maxlength="6"
+          placeholder="● ● ● ● ● ●"
+          autocomplete="off"
+          aria-required="true"
+          aria-describedby="code-hint"
+          pattern="\d{6}"
+        />
+        <!-- Visual digit indicators -->
+        <div id="code-display" aria-hidden="true">
+          <div class="code-digit" id="cd-0">–</div>
+          <div class="code-digit" id="cd-1">–</div>
+          <div class="code-digit" id="cd-2">–</div>
+          <div class="code-digit" id="cd-3">–</div>
+          <div class="code-digit" id="cd-4">–</div>
+          <div class="code-digit" id="cd-5">–</div>
+        </div>
+        <small class="field-hint" id="code-hint">Enter the 6-digit numeric administrator code. This is never transmitted to the frontend — it is only sent as a URL parameter to the backend on submission.</small>
+      </div>
+
+      <div class="admin-divider"></div>
+
+      <!-- PDF upload -->
+      <div class="field" id="field-pdf">
+        <label class="field-label">Reference Document (PDF)</label>
+        <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Select or drag a PDF file to upload">
+          <input
+            type="file"
+            id="admin-file"
+            accept="application/pdf,.pdf"
+            aria-label="Select PDF file"
+          />
+          <div class="drop-icon" aria-hidden="true">⚑</div>
+          <div class="drop-title">Select or Drop PDF Document</div>
+          <div class="drop-hint">Only PDF files are accepted. Maximum size depends on server configuration.</div>
+          <div class="drop-file-name" id="drop-filename" aria-live="polite"></div>
+        </div>
+        <small class="field-hint">Uploaded as <code style="font-family:var(--f-mono);font-size:0.82em;color:var(--copper-lt);">multipart/form-data</code> with field name <code style="font-family:var(--f-mono);font-size:0.82em;color:var(--copper-lt);">pdf</code> — matching the backend <code style="font-family:var(--f-mono);font-size:0.82em;color:var(--copper-lt);">@RequestParam MultipartFile pdf</code>. Content-Type boundary is set automatically by the browser.</small>
+      </div>
+
+      <div class="admin-divider"></div>
+
+      <!-- Submit -->
+      <div class="submit-row">
+        <button class="btn btn-gold" id="admin-submit" aria-label="Upload document to archive" aria-describedby="upload-status">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Add to Archive
+        </button>
+        <button class="btn btn-ghost" id="admin-reset" aria-label="Reset form">
+          Reset
+        </button>
+      </div>
+
+      <!-- Status -->
+      <div class="status-msg" id="upload-status" role="alert" aria-live="assertive"></div>
+
+      <!-- Info box -->
+      <div class="info-box">
+        <div class="info-box-title">About the Archive</div>
+        <p>Documents added here are processed by the Spring AI backend and indexed into the vector store used for retrieval-augmented generation. Only administrators with a valid code may add documents.</p>
+        <p>Endpoint: <code style="font-family:var(--f-mono);font-size:0.82em;color:var(--copper-lt);">POST /ai/admin/upload?code=XXXXXX</code> — multipart field: <code style="font-family:var(--f-mono);font-size:0.82em;color:var(--copper-lt);">pdf</code>.</p>
+        <p>The access code is never stored in the frontend. It is submitted as a URL query parameter with each request and is not retained after the request completes.</p>
+      </div>
+
+    </div><!-- /.admin-form-wrap -->
+  </div><!-- /#admin-main -->
+</div><!-- /#admin-page -->
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════════ -->
+<footer id="footer" role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-orn" aria-hidden="true">
+      <div class="orn"><div class="orn-line"></div><span class="orn-glyph">✦</span><div class="orn-line"></div></div>
+    </div>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">DHĀTU</div>
+        <div class="footer-brand-sub">Ancient Indian Metallurgy</div>
+        <p class="footer-mission">"Exploring the scientific traditions and metallurgical knowledge of ancient India — from the earliest copper workings of the Indus Valley to the steel traditions that shaped civilisations."</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Archive</div>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#metallurgy">Metallurgy</a></li>
+          <li><a href="chat.html">Research Assistant</a></li>
+          <li><a href="admin.html">Archive Administration</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Project</div>
+        <ul class="footer-links">
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="mailto:contact@example.com">Contact</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2024 DHĀTU. An educational research archive.</div>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { initNav, initLangSelects } from './src/js/shared.js';
+import { uploadPdf, UPLOAD_ERROR_MESSAGES } from './src/api/adminApi.js';
+
+initNav();
+initLangSelects();
+
+/* ── DOM refs ──────────────────────────────────────────────────── */
+const codeInput  = document.getElementById('admin-code');
+const fileInput  = document.getElementById('admin-file');
+const dropzone   = document.getElementById('dropzone');
+const dropName   = document.getElementById('drop-filename');
+const submitBtn  = document.getElementById('admin-submit');
+const resetBtn   = document.getElementById('admin-reset');
+const statusEl   = document.getElementById('upload-status');
+const digits     = Array.from({ length: 6 }, (_, i) => document.getElementById(`cd-${i}`));
+
+/* ── CODE INPUT — visual digit display ─────────────────────────── */
+codeInput.addEventListener('input', () => {
+  // Enforce numeric only
+  codeInput.value = codeInput.value.replace(/\D/g, '').slice(0, 6);
+  const val = codeInput.value;
+  digits.forEach((d, i) => {
+    d.textContent = val[i] || '–';
+    d.classList.toggle('filled', i < val.length);
+  });
+});
+
+/* ── FILE INPUT ────────────────────────────────────────────────── */
+function handleFile(file) {
+  if (!file) return;
+  if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+    setStatus('error', 'Only PDF files are accepted. Please select a PDF document.');
+    fileInput.value = '';
+    dropName.textContent = '';
+    return;
+  }
+  dropName.textContent = `${file.name} (${formatBytes(file.size)})`;
+}
+
+fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
+
+/* ── DRAG & DROP ───────────────────────────────────────────────── */
+['dragover','dragenter'].forEach(ev =>
+  dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('dragover'); }));
+['dragleave','dragend','drop'].forEach(ev =>
+  dropzone.addEventListener(ev, () => dropzone.classList.remove('dragover')));
+
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    fileInput.files = dt.files;
+    handleFile(file);
+  }
+});
+
+// Keyboard accessibility
+dropzone.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+});
+
+/* ── STATUS HELPER ─────────────────────────────────────────────── */
+function setStatus(type, message, showDots = false) {
+  statusEl.className = `status-msg show status-${type}`;
+  if (type === 'loading' && showDots) {
+    statusEl.innerHTML = `<div class="dot"></div><div class="dot"></div><div class="dot"></div><span>${escHtml(message)}</span>`;
+  } else {
+    statusEl.textContent = message;
+  }
+  if (type !== 'loading') {
+    // Auto-hide success after 8s
+    if (type === 'success') setTimeout(() => statusEl.classList.remove('show'), 8000);
+  }
+}
+function clearStatus() { statusEl.className = 'status-msg'; statusEl.textContent = ''; }
+
+function escHtml(s) {
+  const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+}
+
+function formatBytes(b) {
+  if (b < 1024) return `${b} B`;
+  if (b < 1024*1024) return `${(b/1024).toFixed(1)} KB`;
+  return `${(b/1024/1024).toFixed(2)} MB`;
+}
+
+/* ── SUBMIT ────────────────────────────────────────────────────── */
+submitBtn.addEventListener('click', async () => {
+  clearStatus();
+
+  const code = codeInput.value.trim();
+  const file = fileInput.files[0];
+
+  // Validate code
+  if (!/^\d{6}$/.test(code)) {
+    setStatus('error', 'Please enter a valid 6-digit numeric access code.');
+    codeInput.focus();
+    return;
+  }
+
+  // Validate file
+  if (!file) {
+    setStatus('error', 'Please select a PDF document to upload.');
+    return;
+  }
+  if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+    setStatus('error', 'Only PDF documents are accepted.');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  setStatus('loading', 'Uploading to archive…', true);
+
+  const result = await uploadPdf(code, file);
+
+  submitBtn.disabled = false;
+
+  if (result.ok) {
+    setStatus('success', `"${file.name}" was successfully added to the archive. The Research Assistant will index it shortly.`);
+    // Reset form on success
+    fileInput.value = '';
+    dropName.textContent = '';
+    codeInput.value = '';
+    digits.forEach(d => { d.textContent = '–'; d.classList.remove('filled'); });
+  } else {
+    const msg = UPLOAD_ERROR_MESSAGES[result.error] || 'An unexpected error occurred. Please try again.';
+    setStatus('error', msg);
+  }
+});
+
+/* ── RESET ─────────────────────────────────────────────────────── */
+resetBtn.addEventListener('click', () => {
+  codeInput.value = '';
+  fileInput.value = '';
+  dropName.textContent = '';
+  digits.forEach(d => { d.textContent = '–'; d.classList.remove('filled'); });
+  clearStatus();
+  codeInput.focus();
+});
+</script>
+
+</body>
+</html>

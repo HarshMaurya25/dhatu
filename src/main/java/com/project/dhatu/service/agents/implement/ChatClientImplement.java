@@ -2,7 +2,6 @@ package com.project.dhatu.service.agents.implement;
 
 import com.project.dhatu.config.VectorStoreConfig;
 import com.project.dhatu.service.agents.ChatClientService;
-import org.hibernate.sql.ast.tree.expression.QueryTransformer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;

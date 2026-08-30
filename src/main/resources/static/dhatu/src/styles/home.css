@@ -1,0 +1,286 @@
+/* ── HOME PAGE STYLES ────────────────────────────────────────────── */
+
+/* HERO ──────────────────────────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  background: var(--ink);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: var(--nav-h);
+  overflow: hidden;
+}
+#hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 60% at 12% 55%, rgba(201,168,76,0.07) 0%, transparent 100%),
+    radial-gradient(ellipse 45% 50% at 82% 22%, rgba(139,94,60,0.06) 0%, transparent 100%);
+}
+.hero-bg-glyph {
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--f-display);
+  font-size: clamp(200px, 26vw, 420px);
+  font-weight: 900;
+  color: rgba(201,168,76,0.035);
+  user-select: none;
+  pointer-events: none;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.hero-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 88px 28px 100px;
+  position: relative;
+  z-index: 1;
+}
+.hero-eyebrow {
+  font-family: var(--f-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hero-eyebrow::after {
+  content: '';
+  display: block;
+  width: 44px; height: 1px;
+  background: var(--gold);
+  opacity: 0.55;
+}
+.hero-title {
+  font-family: var(--f-display);
+  font-size: clamp(2.3rem, 5.5vw, 4.5rem);
+  font-weight: 700;
+  color: var(--parchment);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  max-width: 740px;
+  margin-bottom: 30px;
+}
+.hero-title em { font-style: italic; color: var(--gold); }
+.hero-desc {
+  font-size: 1.1rem;
+  color: var(--ash-lt);
+  max-width: 540px;
+  line-height: 1.88;
+  margin-bottom: 44px;
+}
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 48px;
+}
+.hero-tag {
+  font-family: var(--f-display);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--copper-lt);
+  border: 1px solid rgba(139,94,60,0.38);
+  padding: 5px 12px;
+}
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; }
+.hero-scroll {
+  position: absolute;
+  bottom: 32px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.4;
+  animation: bob 2.6s ease-in-out infinite;
+}
+.hero-scroll span {
+  font-family: var(--f-display);
+  font-size: 0.52rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--parchment-3);
+}
+.hero-scroll-arrow {
+  width: 14px; height: 14px;
+  border-right: 1px solid var(--parchment-3);
+  border-bottom: 1px solid var(--parchment-3);
+  transform: rotate(45deg);
+}
+@keyframes bob {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(7px); }
+}
+
+/* ABOUT ─────────────────────────────────────────────────────────── */
+#about {
+  padding: 96px 28px;
+  background: var(--parchment);
+}
+.about-inner { max-width: var(--max-w); margin: 0 auto; }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  margin-top: 56px;
+  align-items: start;
+}
+.about-text p {
+  font-size: 1.02rem;
+  color: var(--ash);
+  line-height: 1.9;
+  margin-bottom: 18px;
+}
+.about-text p:first-child::first-letter {
+  font-family: var(--f-display);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 0.82;
+  float: left;
+  margin-right: 10px;
+  margin-top: 7px;
+  color: var(--gold);
+}
+.about-text cite {
+  display: block;
+  margin-top: 24px;
+  padding-left: 18px;
+  border-left: 2px solid var(--gold);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--copper);
+  line-height: 1.75;
+}
+.about-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+.stat {
+  padding-left: 22px;
+  border-left: 2px solid rgba(201,168,76,0.5);
+}
+.stat-num {
+  font-family: var(--f-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-label {
+  font-size: 0.88rem;
+  color: var(--ash);
+}
+
+/* METALLURGY ────────────────────────────────────────────────────── */
+#metallurgy {
+  padding: 96px 28px;
+  background: var(--ink-mid);
+}
+.met-inner { max-width: var(--max-w); margin: 0 auto; }
+.met-grid {
+  margin-top: 56px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.12);
+}
+.met-card {
+  background: rgba(26,20,16,0.92);
+  padding: 38px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s var(--ease);
+}
+.met-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.4s var(--ease);
+}
+.met-card:hover { background: rgba(42,29,14,0.95); }
+.met-card:hover::before { transform: scaleX(1); }
+.met-symbol {
+  font-family: var(--f-display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: rgba(201,168,76,0.28);
+  line-height: 1;
+  margin-bottom: 18px;
+  letter-spacing: 0.05em;
+}
+.met-title {
+  font-family: var(--f-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--parchment);
+  margin-bottom: 6px;
+}
+.met-sub {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--copper-lt);
+  margin-bottom: 16px;
+  letter-spacing: 0.06em;
+}
+.met-desc {
+  font-size: 0.9rem;
+  color: var(--ash-lt);
+  line-height: 1.8;
+}
+
+/* CTA BAND ──────────────────────────────────────────────────────── */
+#cta-band {
+  background: var(--parchment-2);
+  padding: 80px 28px;
+  text-align: center;
+}
+.cta-band-inner { max-width: var(--max-w); margin: 0 auto; }
+.cta-band-title {
+  font-family: var(--f-display);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+.cta-band-desc {
+  font-size: 1rem;
+  color: var(--ash);
+  max-width: 520px;
+  margin: 0 auto 36px;
+  line-height: 1.85;
+}
+.cta-band-btns { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; }
+
+/* RESPONSIVE ────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .met-grid { grid-template-columns: repeat(2, 1fr); }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+@media (max-width: 640px) {
+  .met-grid { grid-template-columns: 1fr; }
+  .hero-inner { padding: 72px 20px 88px; }
+  #about, #metallurgy { padding: 64px 20px; }
+  #cta-band { padding: 60px 20px; }
+  .about-stats { flex-direction: row; flex-wrap: wrap; }
+  .stat { flex: 1; min-width: 130px; }
+}

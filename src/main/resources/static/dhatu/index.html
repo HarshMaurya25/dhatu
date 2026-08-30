@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DHĀTU — Ancient Indian Metallurgy</title>
+  <meta name="description" content="An interactive digital archive exploring the metallurgical knowledge, materials and techniques of ancient India." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles/shared.css" />
+  <link rel="stylesheet" href="src/styles/home.css" />
+</head>
+<body>
+
+<!-- ═══ NAV ══════════════════════════════════════════════════════ -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand" aria-label="DHĀTU — home">
+      <span class="nav-brand-name">DHĀTU</span>
+      <span class="nav-brand-sub">Ancient Indian Metallurgy</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" aria-current="page">Home</a></li>
+      <li><a href="index.html#metallurgy">Metallurgy</a></li>
+      <li><a href="chat.html">Research Assistant</a></li>
+      <li><a href="admin.html">Archive</a></li>
+    </ul>
+    <div class="nav-right">
+      <label for="nav-lang" class="sr-only">Language</label>
+      <select id="nav-lang" class="nav-lang lang-select" aria-label="Select language">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+        <option value="fr">Français</option>
+      </select>
+      <button class="nav-ham" id="nav-ham" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-drawer">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+<div id="nav-drawer" role="navigation" aria-label="Mobile navigation">
+  <ul>
+    <li><a href="index.html" aria-current="page">Home</a></li>
+    <li><a href="index.html#metallurgy">Metallurgy</a></li>
+    <li><a href="chat.html">Research Assistant</a></li>
+    <li><a href="admin.html">Archive Administration</a></li>
+  </ul>
+</div>
+
+<!-- ═══ HERO ═════════════════════════════════════════════════════ -->
+<section id="hero" aria-labelledby="hero-title">
+  <div class="hero-bg-glyph" aria-hidden="true">धातु</div>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Archive of Ancient Knowledge</p>
+    <h1 class="hero-title" id="hero-title">Metallurgy in<br/><em>Ancient India</em></h1>
+    <p class="hero-desc">Millennia before the modern world systematised the sciences, craftsmen and scholars of the Indian subcontinent developed profound knowledge of metals — their extraction, refinement, alloying and application — leaving behind marvels that challenge modern understanding.</p>
+    <div class="hero-tags" aria-label="Topics covered">
+      <span class="hero-tag">Iron &amp; Steel</span>
+      <span class="hero-tag">Copper &amp; Bronze</span>
+      <span class="hero-tag">Zinc Distillation</span>
+      <span class="hero-tag">Wootz Steel</span>
+      <span class="hero-tag">Gold &amp; Silver</span>
+      <span class="hero-tag">Smelting Traditions</span>
+      <span class="hero-tag">Crucible Techniques</span>
+    </div>
+    <div class="hero-ctas">
+      <a href="#metallurgy" class="btn btn-gold">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Explore the Knowledge
+      </a>
+      <a href="chat.html" class="btn btn-ghost">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Research Assistant
+      </a>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">
+    <span>Scroll</span>
+    <div class="hero-scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ════════════════════════════════════════════════════ -->
+<section id="about" aria-labelledby="about-title">
+  <div class="about-inner">
+    <p class="section-eyebrow fade-up">Introduction</p>
+    <h2 class="section-title fade-up" id="about-title">A Civilisation Forged in Metal</h2>
+    <div class="about-grid">
+      <div class="about-text fade-up d1">
+        <p>The Indian subcontinent's relationship with metals stretches back more than four thousand years. From the copper implements of the Indus Valley Civilisation to the iconic Iron Pillar of Delhi — standing corrosion-free for over sixteen centuries — ancient India demonstrated metallurgical mastery that continues to confound modern scientists.</p>
+        <p>Texts such as the <em>Arthaśāstra</em> of Kauṭilya and the <em>Rasaratnākara</em> document systematic knowledge of mining, smelting, alloying and refinement — suggesting that metallurgy was pursued not merely as craft but as a rigorous scholarly discipline.</p>
+        <cite>"The superintendent of mines shall examine the quantity and quality of ores, and shall ascertain the value thereof." — Arthaśāstra, Book II</cite>
+      </div>
+      <div class="about-stats fade-up d2">
+        <div class="stat">
+          <div class="stat-num">~1600</div>
+          <div class="stat-label">Years the Delhi Iron Pillar has stood corrosion-free</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">4000+</div>
+          <div class="stat-label">Years of copper metallurgy in the Indian subcontinent</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">9th c. CE</div>
+          <div class="stat-label">Earliest documented zinc distillation at Zawar, Rajasthan</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">Wootz</div>
+          <div class="stat-label">Indian crucible steel — basis of legendary Damascus blades</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ METALLURGY ════════════════════════════════════════════════ -->
+<section id="metallurgy" class="on-dark" aria-labelledby="met-title">
+  <div class="met-inner">
+    <p class="section-eyebrow fade-up">The Archive of Metals</p>
+    <h2 class="section-title fade-up" id="met-title">Materials &amp; Traditions</h2>
+    <p class="section-lead fade-up d1">Each metal carried its own corpus of knowledge — geology, extraction, transformation and application — studied with rigorous precision across generations.</p>
+    <div class="orn-wrap fade-up d2" aria-hidden="true">
+      <div class="orn"><div class="orn-line"></div><span class="orn-glyph">✦ ✦ ✦</span><div class="orn-line"></div></div>
+    </div>
+    <div class="met-grid" role="list">
+      <article class="met-card fade-up d1" role="listitem">
+        <div class="met-symbol" aria-hidden="true">Fe</div>
+        <h3 class="met-title">Iron</h3>
+        <p class="met-sub">Lauha — लोह</p>
+        <p class="met-desc">Iron production in India dates to c. 1800 BCE in the Gangetic plains. The tradition produced high-phosphorus iron alloys of exceptional weather resistance. The Delhi Iron Pillar (c. 400 CE) remains one of the world's most remarkable archaeometallurgical specimens, its corrosion-resistant passive layer understood by modern science only in the 20th century.</p>
+      </article>
+      <article class="met-card fade-up d2" role="listitem">
+        <div class="met-symbol" aria-hidden="true">Wū</div>
+        <h3 class="met-title">Steel</h3>
+        <p class="met-sub">Wootz / Ukku</p>
+        <p class="met-desc">Indian crucible steel — Wootz — was produced from at least the early centuries CE and traded across Central Asia, Persia and into Europe. Its distinctive banding, produced by cementite carbide nanowires in the microstructure, gave rise to the legendary Damascus blade tradition. The process involved sealed clay crucibles with controlled carbonaceous additions.</p>
+      </article>
+      <article class="met-card fade-up d3" role="listitem">
+        <div class="met-symbol" aria-hidden="true">Cu</div>
+        <h3 class="met-title">Copper &amp; Bronze</h3>
+        <p class="met-sub">Tāmra — ताम्र</p>
+        <p class="met-desc">Copper working in the Indus Valley dates to c. 3300 BCE. Sophisticated alloying of copper with tin and arsenic demonstrates systematic experimental knowledge. Texts describe precise ore beneficiation, smelting procedures and casting for ritual, domestic and military objects of extraordinary quality.</p>
+      </article>
+      <article class="met-card fade-up d4" role="listitem">
+        <div class="met-symbol" aria-hidden="true">Zn</div>
+        <h3 class="met-title">Zinc</h3>
+        <p class="met-sub">Yashada — यशद</p>
+        <p class="met-desc">The Zawar mines of Rajasthan provide the earliest large-scale evidence of industrial zinc distillation, dating to approximately the 9th century CE — predating European zinc smelting by several centuries. The downward distillation retort process used is an engineering achievement of remarkable sophistication for its period.</p>
+      </article>
+      <article class="met-card fade-up d5" role="listitem">
+        <div class="met-symbol" aria-hidden="true">Au</div>
+        <h3 class="met-title">Gold &amp; Silver</h3>
+        <p class="met-sub">Suvarna &amp; Rūpya — सुवर्ण</p>
+        <p class="met-desc">Sanskrit texts document cupellation, fire-assaying and parting processes for gold and silver refinement. The Arthaśāstra describes mine administration, ore testing and refining methods. Gupta-era gold coins reflect exceptional standards of metallurgical refinement achieved through long empirical tradition.</p>
+      </article>
+      <article class="met-card fade-up d6" role="listitem">
+        <div class="met-symbol" aria-hidden="true">∴</div>
+        <h3 class="met-title">Techniques</h3>
+        <p class="met-sub">Dhātukarmā — धातुकर्म</p>
+        <p class="met-desc">Ancient Indian metallurgical technique encompassed smelting, forging, casting, alloying, annealing and quenching. The lost-wax casting tradition produced sculptures of extraordinary delicacy. Texts describe bellows design, furnace construction, fuel selection and temperature control refined over generations.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA BAND ══════════════════════════════════════════════════ -->
+<section id="cta-band" aria-labelledby="cta-title">
+  <div class="cta-band-inner fade-up">
+    <div class="orn-wrap" style="margin-bottom:32px;" aria-hidden="true">
+      <div class="orn"><div class="orn-line"></div><span class="orn-glyph">✦</span><div class="orn-line"></div></div>
+    </div>
+    <h2 class="cta-band-title" id="cta-title">Explore the Research Assistant</h2>
+    <p class="cta-band-desc">Pose questions directly to the archive. The Research Assistant draws upon verified historical and scholarly sources to illuminate the metallurgical traditions of ancient India.</p>
+    <div class="cta-band-btns">
+      <a href="chat.html" class="btn btn-gold">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Consult the Archive
+      </a>
+      <a href="admin.html" class="btn btn-ghost">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Add Source Documents
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════════ -->
+<footer id="footer" role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-orn" aria-hidden="true">
+      <div class="orn"><div class="orn-line"></div><span class="orn-glyph">✦</span><div class="orn-line"></div></div>
+    </div>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">DHĀTU</div>
+        <div class="footer-brand-sub">Ancient Indian Metallurgy</div>
+        <p class="footer-mission">"Exploring the scientific traditions and metallurgical knowledge of ancient India — from the earliest copper workings of the Indus Valley to the steel traditions that shaped civilisations."</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Archive</div>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#metallurgy">Metallurgy</a></li>
+          <li><a href="chat.html">Research Assistant</a></li>
+          <li><a href="admin.html">Archive Administration</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Project</div>
+        <ul class="footer-links">
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="mailto:contact@example.com">Contact</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2024 DHĀTU. An educational research archive.</div>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { initNav, initLangSelects, initScrollAnimations } from './src/js/shared.js';
+
+// Hero entrance stagger
+const heroItems = ['.hero-eyebrow','.hero-title','.hero-desc','.hero-tags','.hero-ctas'];
+heroItems.forEach((sel, i) => {
+  const el = document.querySelector(sel);
+  if (!el) return;
+  el.style.cssText = `opacity:0;transform:translateY(24px);transition:opacity 0.68s ease ${i*0.1}s,transform 0.68s ease ${i*0.1}s`;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.style.opacity = '1'; el.style.transform = 'translateY(0)';
+  }));
+});
+
+initNav();
+initLangSelects();
+initScrollAnimations();
+</script>
+
+</body>
+</html>
