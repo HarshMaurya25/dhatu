@@ -1,8 +1,10 @@
-package com.project.dhatu.service.implement;
+package com.project.dhatu.service.uploadDta.implement;
 
-import com.project.dhatu.service.DataInputService;
-import com.project.dhatu.service.SplitterService;
-import com.project.dhatu.service.ToDocumentService;
+import com.project.dhatu.service.uploadDta.DataInputService;
+import com.project.dhatu.service.uploadDta.ToDocumentService;
+import com.project.dhatu.service.uploadDta.SplitterService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,16 +16,26 @@ import java.util.Objects;
 @Service
 public class MultipartfileDataInputService implements DataInputService {
 
-    @Value("admin.code")
+    private static final Logger log = LoggerFactory.getLogger(MultipartfileDataInputService.class);
+
+    @Value("${admin.code}")
     private String secretCode;
 
-    private ToDocumentService toDocumentService;
-    private SplitterService splitterService;
+    private final ToDocumentService toDocumentService;
+    private final SplitterService splitterService;
+
+    public MultipartfileDataInputService(ToDocumentService toDocumentService, SplitterService splitterService) {
+        this.toDocumentService = toDocumentService;
+        this.splitterService = splitterService;
+    }
+
 
     @Override
     public Boolean uploadPDF(MultipartFile pdf, String code) {
 
+        log.info("PDF with code {} is provided", code);
         if (!code.equals(secretCode)){
+            log.info("PDF with code {} is rejected", code);
             return Boolean.FALSE;
         }
 

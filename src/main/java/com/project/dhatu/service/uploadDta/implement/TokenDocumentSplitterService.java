@@ -1,7 +1,7 @@
-package com.project.dhatu.service.implement;
+package com.project.dhatu.service.uploadDta.implement;
 
 import com.project.dhatu.config.TokenSplitterConfig;
-import com.project.dhatu.service.SplitterService;
+import com.project.dhatu.service.uploadDta.SplitterService;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.stereotype.Service;

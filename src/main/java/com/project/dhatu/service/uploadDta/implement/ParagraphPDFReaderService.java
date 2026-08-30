@@ -1,16 +1,15 @@
-package com.project.dhatu.service.implement;
+package com.project.dhatu.service.uploadDta.implement;
 
-import com.project.dhatu.service.ToDocumentService;
+import com.project.dhatu.service.uploadDta.ToDocumentService;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.ExtractedTextFormatter;
 import org.springframework.ai.reader.pdf.ParagraphPdfDocumentReader;
 import org.springframework.ai.reader.pdf.config.PdfDocumentReaderConfig;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Service
+//@Service
 public class ParagraphPDFReaderService implements ToDocumentService {
 
     @Override

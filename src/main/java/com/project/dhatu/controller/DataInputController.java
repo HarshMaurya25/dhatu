@@ -1,6 +1,6 @@
 package com.project.dhatu.controller;
 
-import com.project.dhatu.service.DataInputService;
+import com.project.dhatu.service.uploadDta.DataInputService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +17,7 @@ public class DataInputController {
 
     @PostMapping("/upload")
     public ResponseEntity<Boolean> uploadPDF(
-            @RequestBody(required = true)MultipartFile pdf,
+            @RequestParam(required = true)MultipartFile pdf,
             @RequestParam("code") String code
             ){
 

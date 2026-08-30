@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Archive Administration — Dhātu</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+            rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --parchment: #eee3c9;
+            --paper: #f8f1df;
+            --ink: #2b2119;
+            --ink-soft: #59483a;
+            --brown: #624633;
+            --brown-dark: #35271d;
+            --copper: #9a5f3d;
+            --copper-dark: #71432d;
+            --gold: #b18a4a;
+            --border: rgba(80, 55, 35, 0.28);
+
+            --success-bg: #e3eadc;
+            --success-text: #365137;
+
+            --error-bg: #eadbd3;
+            --error-text: #713b2f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            color: var(--ink);
+
+            font-family: "Inter", sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(255, 255, 255, 0.35),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 80% 70%,
+                    rgba(120, 80, 40, 0.07),
+                    transparent 30%
+                ),
+                var(--parchment);
+        }
+
+        body::before {
+            content: "";
+
+            position: fixed;
+            inset: 0;
+
+            pointer-events: none;
+
+            opacity: 0.12;
+
+            background-image:
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(80, 50, 30, 0.15) 0px,
+                    rgba(80, 50, 30, 0.15) 1px,
+                    transparent 1px,
+                    transparent 4px
+                );
+
+            z-index: -1;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+
+            border-bottom: 1px solid var(--border);
+
+            background: rgba(238, 227, 201, 0.95);
+
+            backdrop-filter: blur(8px);
+        }
+
+        .nav {
+            width: min(1180px, calc(100% - 40px));
+
+            min-height: 78px;
+
+            margin: auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            flex-shrink: 0;
+        }
+
+        .brand-symbol {
+            width: 42px;
+            height: 42px;
+
+            border: 1px solid var(--gold);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: var(--copper-dark);
+
+            font-family: "Cormorant Garamond", serif;
+            font-size: 23px;
+            font-weight: 600;
+
+            transform: rotate(45deg);
+        }
+
+        .brand-symbol span {
+            transform: rotate(-45deg);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: 25px;
+            font-weight: 700;
+
+            letter-spacing: 0.16em;
+
+            line-height: 1;
+        }
+
+        .brand-subtitle {
+            margin-top: 5px;
+
+            font-size: 9px;
+
+            letter-spacing: 0.19em;
+
+            text-transform: uppercase;
+
+            color: var(--ink-soft);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+
+            gap: 30px;
+
+            font-size: 12px;
+
+            letter-spacing: 0.09em;
+
+            text-transform: uppercase;
+        }
+
+        .nav-links a {
+            position: relative;
+
+            padding: 8px 0;
+
+            color: var(--ink-soft);
+        }
+
+        .nav-links a::after {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            bottom: 0;
+
+            width: 0;
+            height: 1px;
+
+            background: var(--copper);
+
+            transition: width 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--ink);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links .active::after {
+            width: 100%;
+        }
+
+        .nav-links .active {
+            color: var(--copper-dark);
+        }
+
+        .menu-button {
+            display: none;
+
+            width: 44px;
+            height: 44px;
+
+            border: 1px solid var(--border);
+
+            background: transparent;
+
+            color: var(--ink);
+
+            cursor: pointer;
+
+            font-size: 20px;
+        }
+
+        /* =========================
+           MOBILE MENU
+        ========================= */
+
+        .mobile-menu {
+            display: none;
+
+            padding: 15px 20px 25px;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .mobile-menu.open {
+            display: block;
+        }
+
+        .mobile-menu a {
+            display: block;
+
+            padding: 14px 0;
+
+            border-bottom: 1px solid var(--border);
+
+            font-size: 12px;
+
+            letter-spacing: 0.08em;
+
+            text-transform: uppercase;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        main {
+            width: min(1000px, calc(100% - 40px));
+
+            margin: auto;
+
+            padding: 85px 0 100px;
+        }
+
+        .page-intro {
+            max-width: 720px;
+
+            margin: 0 auto 55px;
+
+            text-align: center;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            color: var(--copper-dark);
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            letter-spacing: 0.2em;
+
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before,
+        .eyebrow::after {
+            content: "";
+
+            width: 35px;
+            height: 1px;
+
+            background: var(--gold);
+        }
+
+        h1 {
+            margin: 18px 0 15px;
+
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: clamp(46px, 7vw, 76px);
+
+            font-weight: 500;
+
+            line-height: 0.95;
+        }
+
+        .intro-text {
+            max-width: 620px;
+
+            margin: auto;
+
+            color: var(--ink-soft);
+
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: 21px;
+
+            line-height: 1.5;
+        }
+
+        /* =========================
+           ORNAMENT
+        ========================= */
+
+        .ornament {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 12px;
+
+            margin: 28px 0;
+        }
+
+        .ornament-line {
+            width: 70px;
+            height: 1px;
+
+            background: var(--gold);
+        }
+
+        .ornament-diamond {
+            width: 8px;
+            height: 8px;
+
+            border: 1px solid var(--gold);
+
+            transform: rotate(45deg);
+        }
+
+        /* =========================
+           UPLOAD CARD
+        ========================= */
+
+        .archive-card {
+            position: relative;
+
+            max-width: 700px;
+
+            margin: auto;
+
+            padding: 48px;
+
+            background: var(--paper);
+
+            border: 1px solid var(--border);
+
+            box-shadow:
+                0 18px 45px rgba(48, 32, 20, 0.14);
+        }
+
+        .archive-card::before {
+            content: "";
+
+            position: absolute;
+
+            inset: 9px;
+
+            border: 1px solid rgba(177, 138, 74, 0.24);
+
+            pointer-events: none;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-heading {
+            margin: 0 0 8px;
+
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: 31px;
+
+            font-weight: 600;
+        }
+
+        .card-description {
+            margin: 0 0 30px;
+
+            color: var(--ink-soft);
+
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: 18px;
+
+            line-height: 1.45;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .field {
+            margin-top: 24px;
+        }
+
+        .field label {
+            display: block;
+
+            margin-bottom: 9px;
+
+            color: var(--brown-dark);
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            letter-spacing: 0.15em;
+
+            text-transform: uppercase;
+        }
+
+        .code-input {
+            width: 100%;
+            height: 52px;
+
+            padding: 0 15px;
+
+            border: 1px solid var(--border);
+
+            outline: none;
+
+            background: rgba(255, 255, 255, 0.4);
+
+            color: var(--ink);
+
+            letter-spacing: 0.25em;
+        }
+
+        .code-input:focus {
+            border-color: var(--copper);
+
+            box-shadow:
+                0 0 0 3px rgba(154, 95, 61, 0.10);
+        }
+
+        .code-input::placeholder {
+            color: rgba(89, 72, 58, 0.5);
+
+            letter-spacing: 0.08em;
+        }
+
+        /* =========================
+           FILE UPLOAD
+        ========================= */
+
+        .file-wrapper {
+            position: relative;
+        }
+
+        .file-input {
+            position: absolute;
+
+            width: 1px;
+            height: 1px;
+
+            opacity: 0;
+        }
+
+        .file-label {
+            min-height: 130px;
+
+            padding: 25px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            border: 1px dashed rgba(98, 70, 51, 0.45);
+
+            background: rgba(255, 255, 255, 0.2);
+
+            cursor: pointer;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .file-label:hover,
+        .file-label.dragover {
+            border-color: var(--copper);
+
+            background:
+                rgba(154, 95, 61, 0.06);
+        }
+
+        .upload-symbol {
+            margin-bottom: 10px;
+
+            color: var(--copper);
+
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: 32px;
+        }
+
+        .file-main-text {
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: 19px;
+
+            font-weight: 600;
+        }
+
+        .file-sub-text {
+            margin-top: 4px;
+
+            color: var(--ink-soft);
+
+            font-size: 11px;
+        }
+
+        .selected-file {
+            margin-top: 12px;
+
+            color: var(--copper-dark);
+
+            font-size: 12px;
+
+            text-align: center;
+
+            word-break: break-word;
+        }
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .upload-button {
+            width: 100%;
+
+            min-height: 54px;
+
+            margin-top: 28px;
+
+            border: 1px solid var(--brown-dark);
+
+            background: var(--brown-dark);
+
+            color: var(--parchment);
+
+            cursor: pointer;
+
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: 19px;
+
+            letter-spacing: 0.04em;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .upload-button:hover:not(:disabled) {
+            background: var(--copper-dark);
+
+            transform: translateY(-1px);
+        }
+
+        .upload-button:disabled {
+            opacity: 0.55;
+
+            cursor: not-allowed;
+        }
+
+        /* =========================
+           RESULT
+        ========================= */
+
+        .result {
+            display: none;
+
+            margin-top: 20px;
+
+            padding: 15px 17px;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+        .result.success {
+            display: block;
+
+            background: var(--success-bg);
+
+            color: var(--success-text);
+
+            border: 1px solid rgba(54, 81, 55, 0.18);
+        }
+
+        .result.error {
+            display: block;
+
+            background: var(--error-bg);
+
+            color: var(--error-text);
+
+            border: 1px solid rgba(113, 59, 47, 0.18);
+        }
+
+        /* =========================
+           NOTE
+        ========================= */
+
+        .archive-note {
+            max-width: 700px;
+
+            margin: 28px auto 0;
+
+            padding: 20px 24px;
+
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+
+            color: var(--ink-soft);
+
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: 16px;
+
+            line-height: 1.5;
+
+            text-align: center;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            padding: 45px 20px;
+
+            border-top: 1px solid var(--border);
+
+            text-align: center;
+        }
+
+        .footer-brand {
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: 27px;
+
+            font-weight: 700;
+
+            letter-spacing: 0.16em;
+        }
+
+        .footer-subtitle {
+            margin-top: 7px;
+
+            color: var(--ink-soft);
+
+            font-size: 9px;
+
+            letter-spacing: 0.18em;
+
+            text-transform: uppercase;
+        }
+
+        .footer-text {
+            max-width: 520px;
+
+            margin: 20px auto 0;
+
+            color: var(--ink-soft);
+
+            font-family: "Cormorant Garamond", serif;
+
+            font-size: 16px;
+
+            line-height: 1.45;
+        }
+
+        .footer-links {
+            display: flex;
+
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+            gap: 25px;
+
+            margin-top: 25px;
+
+            font-size: 10px;
+
+            letter-spacing: 0.1em;
+
+            text-transform: uppercase;
+        }
+
+        .footer-links a {
+            color: var(--ink-soft);
+        }
+
+        .footer-links a:hover {
+            color: var(--copper-dark);
+        }
+
+        .copyright {
+            margin-top: 28px;
+
+            color: rgba(89, 72, 58, 0.65);
+
+            font-size: 9px;
+
+            letter-spacing: 0.08em;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            .nav-links {
+                display: none;
+            }
+
+            .menu-button {
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+            }
+
+            main {
+                padding-top: 65px;
+            }
+
+            .archive-card {
+                padding: 38px 30px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .nav {
+                width: calc(100% - 28px);
+
+                min-height: 68px;
+            }
+
+            .brand-symbol {
+                width: 36px;
+                height: 36px;
+
+                font-size: 19px;
+            }
+
+            .brand-title {
+                font-size: 22px;
+            }
+
+            .brand-subtitle {
+                font-size: 8px;
+            }
+
+            main {
+                width: calc(100% - 28px);
+
+                padding: 55px 0 75px;
+            }
+
+            h1 {
+                font-size: clamp(43px, 15vw, 62px);
+            }
+
+            .intro-text {
+                font-size: 18px;
+            }
+
+            .eyebrow {
+                font-size: 8px;
+            }
+
+            .eyebrow::before,
+            .eyebrow::after {
+                width: 20px;
+            }
+
+            .archive-card {
+                padding: 32px 20px;
+            }
+
+            .archive-card::before {
+                inset: 6px;
+            }
+
+            .card-heading {
+                font-size: 27px;
+            }
+
+            .card-description {
+                font-size: 17px;
+            }
+
+            .file-label {
+                min-height: 120px;
+
+                padding: 20px 14px;
+            }
+
+            .upload-button {
+                min-height: 56px;
+            }
+
+            footer {
+                padding: 38px 18px;
+            }
+        }
+
+        @media (max-width: 380px) {
+
+            .brand-subtitle {
+                display: none;
+            }
+
+            .brand-title {
+                font-size: 20px;
+            }
+
+            .archive-card {
+                padding: 28px 17px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+
+<header>
+
+    <nav class="nav">
+
+        <a href="index.html" class="brand">
+
+            <div class="brand-symbol">
+                <span>ध</span>
+            </div>
+
+            <div class="brand-text">
+
+                <div class="brand-title">
+                    DHĀTU
+                </div>
+
+                <div class="brand-subtitle">
+                    Ancient Indian Metallurgy
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="index.html#metallurgy">
+                Metallurgy
+            </a>
+
+            <a href="chat.html">
+                Research Assistant
+            </a>
+
+            <a href="admin.html" class="active">
+                Archive
+            </a>
+
+        </div>
+
+
+        <button
+                type="button"
+                class="menu-button"
+                id="menuButton"
+                aria-label="Open navigation"
+                aria-expanded="false"
+        >
+            ☰
+        </button>
+
+    </nav>
+
+
+    <div class="mobile-menu" id="mobileMenu">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="index.html#metallurgy">
+            Metallurgy
+        </a>
+
+        <a href="chat.html">
+            Research Assistant
+        </a>
+
+        <a href="admin.html">
+            Archive
+        </a>
+
+    </div>
+
+</header>
+
+
+<!-- ============================================================
+     MAIN
+============================================================ -->
+
+<main>
+
+    <section class="page-intro">
+
+        <div class="eyebrow">
+            Archive Administration
+        </div>
+
+        <h1>
+            Add a Source<br>
+            to the Archive
+        </h1>
+
+        <div class="ornament">
+
+            <span class="ornament-line"></span>
+
+            <span class="ornament-diamond"></span>
+
+            <span class="ornament-line"></span>
+
+        </div>
+
+        <p class="intro-text">
+            Preserve and expand the knowledge available to the
+            research assistant by adding verified historical
+            reference documents to the archive.
+        </p>
+
+    </section>
+
+
+    <!-- ========================================================
+         UPLOAD FORM
+    ========================================================= -->
+
+    <section class="archive-card">
+
+        <div class="card-content">
+
+            <h2 class="card-heading">
+                Archive Contribution
+            </h2>
+
+            <p class="card-description">
+                Provide the six-digit archive code and select
+                a PDF reference document.
+            </p>
+
+
+            <form id="uploadForm" novalidate>
+
+                <!-- ACCESS CODE -->
+
+                <div class="field">
+
+                    <label for="code">
+                        Archive Access Code
+                    </label>
+
+                    <input
+                            type="text"
+                            id="code"
+                            name="code"
+                            class="code-input"
+                            placeholder="Enter 6-digit code"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            maxlength="6"
+                            pattern="[0-9]{6}"
+                            required
+                    >
+
+                </div>
+
+
+                <!-- PDF -->
+
+                <div class="field">
+
+                    <label for="pdf">
+                        Reference Document
+                    </label>
+
+                    <div class="file-wrapper">
+
+                        <input
+                                type="file"
+                                id="pdf"
+                                name="pdf"
+                                class="file-input"
+                                accept="application/pdf,.pdf"
+                                required
+                        >
+
+                        <label
+                                for="pdf"
+                                class="file-label"
+                                id="fileLabel"
+                        >
+
+                            <div class="upload-symbol">
+                                ↑
+                            </div>
+
+                            <div class="file-main-text">
+                                Select a PDF document
+                            </div>
+
+                            <div class="file-sub-text">
+                                Click to browse your device
+                            </div>
+
+                        </label>
+
+                    </div>
+
+                    <div
+                            class="selected-file"
+                            id="selectedFile"
+                    ></div>
+
+                </div>
+
+
+                <!-- UPLOAD BUTTON -->
+
+                <button
+                        type="submit"
+                        id="uploadButton"
+                        class="upload-button"
+                >
+                    Add to Archive
+                </button>
+
+
+                <!-- RESULT -->
+
+                <div
+                        id="result"
+                        class="result"
+                        role="status"
+                        aria-live="polite"
+                ></div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <div class="archive-note">
+
+        <strong>Archive Note:</strong>
+        Only verified PDF reference material should be added
+        to the knowledge archive. Uploaded documents are processed
+        by the research system for retrieval-based responses.
+
+    </div>
+
+</main>
+
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+
+<footer>
+
+    <div class="footer-brand">
+        DHĀTU
+    </div>
+
+    <div class="footer-subtitle">
+        Ancient Indian Metallurgy
+    </div>
+
+    <p class="footer-text">
+        Exploring the scientific traditions, materials and
+        metallurgical knowledge preserved in the history of India.
+    </p>
+
+    <div class="footer-links">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="index.html#metallurgy">
+            Metallurgy
+        </a>
+
+        <a href="chat.html">
+            Research Assistant
+        </a>
+
+        <a href="admin.html">
+            Archive
+        </a>
+
+    </div>
+
+    <div class="copyright">
+        © 2026 Dhātu · Digital Archive of Ancient Indian Metallurgy
+    </div>
+
+</footer>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+
+<script>
+
+    /*
+     * ==========================================================
+     * SPRING BOOT BACKEND
+     * ==========================================================
+     */
+
+    const API_BASE_URL = "http://localhost:8090";
+
+
+    /* ==========================================================
+       ELEMENTS
+    ========================================================== */
+
+    const form =
+        document.getElementById("uploadForm");
+
+    const button =
+        document.getElementById("uploadButton");
+
+    const result =
+        document.getElementById("result");
+
+    const codeInput =
+        document.getElementById("code");
+
+    const pdfInput =
+        document.getElementById("pdf");
+
+    const fileLabel =
+        document.getElementById("fileLabel");
+
+    const selectedFile =
+        document.getElementById("selectedFile");
+
+    const menuButton =
+        document.getElementById("menuButton");
+
+    const mobileMenu =
+        document.getElementById("mobileMenu");
+
+
+    /* ==========================================================
+       MOBILE MENU
+    ========================================================== */
+
+    menuButton.addEventListener("click", () => {
+
+        const open =
+            mobileMenu.classList.toggle("open");
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            String(open)
+        );
+
+        menuButton.textContent =
+            open ? "×" : "☰";
+
+    });
+
+
+    mobileMenu
+        .querySelectorAll("a")
+        .forEach(link => {
+
+            link.addEventListener("click", () => {
+
+                mobileMenu.classList.remove("open");
+
+                menuButton.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+                menuButton.textContent = "☰";
+
+            });
+
+        });
+
+
+    /* ==========================================================
+       CODE INPUT
+    ========================================================== */
+
+    codeInput.addEventListener("input", () => {
+
+        codeInput.value =
+            codeInput.value
+                .replace(/\D/g, "")
+                .slice(0, 6);
+
+    });
+
+
+    /* ==========================================================
+       FILE SELECTION
+    ========================================================== */
+
+    pdfInput.addEventListener("change", () => {
+
+        const file =
+            pdfInput.files[0];
+
+        if (!file) {
+
+            selectedFile.textContent = "";
+
+            return;
+        }
+
+        if (!isPdf(file)) {
+
+            selectedFile.textContent =
+                "Invalid file. Please select a PDF.";
+
+            pdfInput.value = "";
+
+            return;
+        }
+
+        selectedFile.textContent =
+            `Selected: ${file.name}`;
+
+    });
+
+
+    /* ==========================================================
+       DRAG AND DROP
+    ========================================================== */
+
+    fileLabel.addEventListener(
+        "dragover",
+        event => {
+
+            event.preventDefault();
+
+            fileLabel.classList.add("dragover");
+
+        }
+    );
+
+
+    fileLabel.addEventListener(
+        "dragleave",
+        () => {
+
+            fileLabel.classList.remove("dragover");
+
+        }
+    );
+
+
+    fileLabel.addEventListener(
+        "drop",
+        event => {
+
+            event.preventDefault();
+
+            fileLabel.classList.remove("dragover");
+
+            const file =
+                event.dataTransfer.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            if (!isPdf(file)) {
+
+                showResult(
+                    "Only PDF files are accepted.",
+                    false
+                );
+
+                return;
+            }
+
+            const dataTransfer =
+                new DataTransfer();
+
+            dataTransfer.items.add(file);
+
+            pdfInput.files =
+                dataTransfer.files;
+
+            selectedFile.textContent =
+                `Selected: ${file.name}`;
+
+        }
+    );
+
+
+    /* ==========================================================
+       FORM SUBMISSION
+    ========================================================== */
+
+    form.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+            clearResult();
+
+
+            const code =
+                codeInput.value.trim();
+
+            const pdf =
+                pdfInput.files[0];
+
+
+            /* ----------------------------------------------
+               Validate access code
+            ---------------------------------------------- */
+
+            if (!/^\d{6}$/.test(code)) {
+
+                showResult(
+                    "Please enter a valid 6-digit archive access code.",
+                    false
+                );
+
+                codeInput.focus();
+
+                return;
+            }
+
+
+            /* ----------------------------------------------
+               Validate PDF
+            ---------------------------------------------- */
+
+            if (!pdf) {
+
+                showResult(
+                    "Please select a PDF reference document.",
+                    false
+                );
+
+                return;
+            }
+
+
+            if (!isPdf(pdf)) {
+
+                showResult(
+                    "Only PDF files are accepted.",
+                    false
+                );
+
+                return;
+            }
+
+
+            /* ----------------------------------------------
+               Create multipart request
+            ---------------------------------------------- */
+
+            const formData =
+                new FormData();
+
+            /*
+             * Spring Boot should use:
+             *
+             * @RequestParam("pdf")
+             */
+
+            formData.append(
+                "pdf",
+                pdf
+            );
+
+
+            /* ----------------------------------------------
+               Loading state
+            ---------------------------------------------- */
+
+            setLoading(true);
+
+
+            try {
+
+                const params =
+                    new URLSearchParams({
+                        code: code
+                    });
+
+
+                /*
+                 * POST:
+                 *
+                 * http://localhost:8090/ai/admin/upload?code=123456
+                 */
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/ai/admin/upload?${params.toString()}`,
+                        {
+                            method: "POST",
+
+                            body: formData
+                        }
+                    );
+
+
+                /* ------------------------------------------
+                   HTTP error
+                ------------------------------------------ */
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `Upload failed. HTTP ${response.status}`
+                    );
+
+                }
+
+
+                /* ------------------------------------------
+                   Backend returns boolean
+                ------------------------------------------ */
+
+                const success =
+                    await response.json();
+
+
+                if (success === true) {
+
+                    showResult(
+                        "The PDF has been successfully added to the archive.",
+                        true
+                    );
+
+                    form.reset();
+
+                    selectedFile.textContent = "";
+
+                } else {
+
+                    showResult(
+                        "The server could not add this document to the archive.",
+                        false
+                    );
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Upload error:",
+                    error
+                );
+
+                showResult(
+                    "Unable to reach the Spring Boot server. Make sure it is running on port 8090.",
+                    false
+                );
+
+            } finally {
+
+                setLoading(false);
+
+            }
+
+        }
+    );
+
+
+    /* ==========================================================
+       PDF VALIDATION
+    ========================================================== */
+
+    function isPdf(file) {
+
+        if (!file) {
+            return false;
+        }
+
+        return (
+            file.type === "application/pdf" ||
+            file.name
+                .toLowerCase()
+                .endsWith(".pdf")
+        );
+
+    }
+
+
+    /* ==========================================================
+       LOADING
+    ========================================================== */
+
+    function setLoading(isLoading) {
+
+        button.disabled =
+            isLoading;
+
+        button.textContent =
+            isLoading
+                ? "Adding to Archive..."
+                : "Add to Archive";
+
+    }
+
+
+    /* ==========================================================
+       RESULT
+    ========================================================== */
+
+    function showResult(
+        message,
+        success
+    ) {
+
+        result.textContent =
+            message;
+
+        result.className =
+            success
+                ? "result success"
+                : "result error";
+
+        result.style.display =
+            "block";
+
+    }
+
+
+    function clearResult() {
+
+        result.textContent = "";
+
+        result.className = "result";
+
+        result.style.display = "none";
+
+    }
+
+</script>
+
+</body>
+</html>

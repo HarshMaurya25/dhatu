@@ -1,7 +1,7 @@
 pdf:
   splitter:
-    chunk-size: 800
-    min-chunk-size-chars: 300
+    chunk-size: 400
+    min-chunk-size-chars: 100
     min-chunk-length-to-embed: 50
     max-num-chunks: 5000
     keep-separator: true
