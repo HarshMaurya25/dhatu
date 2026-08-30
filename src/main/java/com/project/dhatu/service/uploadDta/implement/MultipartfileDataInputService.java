@@ -6,6 +6,7 @@ import com.project.dhatu.service.uploadDta.SplitterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.document.DocumentTransformer;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,11 +26,13 @@ public class MultipartfileDataInputService implements DataInputService {
     private final ToDocumentService toDocumentService;
     private final SplitterService splitterService;
     private final VectorStore vectorStore;
+    private final DocumentTransformer whitespaceCleanerTransformer;
 
-    public MultipartfileDataInputService(ToDocumentService toDocumentService, SplitterService splitterService, VectorStore vectorStore) {
+    public MultipartfileDataInputService(ToDocumentService toDocumentService, SplitterService splitterService, VectorStore vectorStore, DocumentTransformer whitespaceCleanerTransformer) {
         this.toDocumentService = toDocumentService;
         this.splitterService = splitterService;
         this.vectorStore = vectorStore;
+        this.whitespaceCleanerTransformer = whitespaceCleanerTransformer;
     }
 
     @Override
@@ -46,9 +49,13 @@ public class MultipartfileDataInputService implements DataInputService {
         }
 
         List<Document> documents = toDocumentService.toDocument(pdf);
+        documents = whitespaceCleanerTransformer.transform(documents);
         List<Document> splitdocument = splitterService.splitDocument(documents);
 
 //        this.vectorStore.add(splitdocument);
+        System.out.println("Length is " + splitdocument.size());
+        splitdocument.forEach(System.out::println);
+
         return null;
     }
 
