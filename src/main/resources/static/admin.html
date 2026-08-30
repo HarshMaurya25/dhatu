@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="hi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<title id="metaTitle">अभिलेखागार — DHĀTU</title>
+<meta id="metaDesc" name="description" content="DHĀTU अभिलेखागार में स्रोत दस्तावेज़ जोड़ें।">
+<style>
+:root{
+  --ink:#17130f;--ink-2:#211a14;--ink-3:#2d2117;
+  --paper:#f4ecd9;--paper-2:#e8dbc0;--muted:#9a8a74;
+  --gold:#c9a84c;--gold-2:#e2c875;--copper:#a86d45;
+  --line:rgba(201,168,76,.18);--white:#fffaf0;
+  --display:Georgia,"Times New Roman",serif;
+  --body:"Trebuchet MS",Arial,sans-serif;
+  --nav:68px;--ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.65;overflow-x:hidden;max-width:100vw}
+a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
+button{cursor:pointer}::selection{background:var(--gold);color:var(--ink)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+
+.nav{position:fixed;z-index:1000;top:0;left:0;right:0;height:var(--nav);background:rgba(23,19,15,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-inner{height:100%;max-width:1180px;margin:auto;padding:0 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;flex-direction:column;line-height:1;min-width:max-content}
+.brand strong{font:700 22px/1 var(--display);letter-spacing:.16em;color:var(--gold)}
+.brand span{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--paper-2);transition:.2s;padding:6px 0}
+.nav-links a:hover,.nav-links a[aria-current=page]{color:var(--gold)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.lang-wrap{position:relative}
+.lang{appearance:none;-webkit-appearance:none;background:#211913;color:var(--paper-2);border:1px solid var(--line);padding:7px 28px 7px 10px;font-size:11px;border-radius:4px;cursor:pointer}
+.lang-wrap::after{content:"▾";position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--gold);pointer-events:none;font-size:10px}
+.lang option{background:#1a1410;color:var(--paper)}
+.hamb{display:none;background:none;border:0;padding:8px;cursor:pointer;color:var(--paper-2)}
+.hamb i{display:block;width:22px;height:2px;background:var(--paper-2);margin:4px 0;transition:.25s}
+.drawer{display:none;position:fixed;z-index:999;top:var(--nav);left:0;right:0;background:rgba(23,19,15,.98);border-bottom:1px solid var(--line);padding:24px 20px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.drawer.open{display:block;animation:drawerIn .22s ease-out}
+.drawer ul{list-style:none;display:grid;gap:16px}
+.drawer a{color:var(--paper-2);font-size:14px;letter-spacing:.12em;text-transform:uppercase;display:block;padding:4px 0}
+.drawer a:hover{color:var(--gold)}
+@keyframes drawerIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border:1px solid transparent;font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;transition:transform .2s var(--ease),background .2s,border-color .2s;text-align:center}
+.btn-gold{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.btn-gold:hover{background:var(--gold-2);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--paper-2);border-color:rgba(244,236,217,.28)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+
+.admin-page{min-height:100dvh;background:#17130f;color:var(--paper);padding-top:var(--nav);display:flex;flex-direction:column}
+.admin-main{width:100%;max-width:1080px;margin:auto;padding:75px 26px 90px;flex:1}
+.admin-heading{max-width:700px;margin-bottom:48px}
+.admin-heading .eyebrow{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.admin-heading h1{font:600 clamp(36px,5vw,58px)/1.05 var(--display)}
+.admin-heading p{color:#a69580;font:16px/1.7 Georgia,serif;margin-top:16px}
+.admin-card{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);background:#1d1712;box-shadow:0 18px 45px rgba(0,0,0,.35)}
+.admin-panel{padding:34px}
+.admin-panel+.admin-panel{border-left:1px solid var(--line)}
+.field{margin-bottom:28px}
+.label{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.hint{font-size:11.5px;color:#8e7e6a;margin-top:8px;line-height:1.55}
+.input{width:100%;background:#130f0c;border:1px solid rgba(201,168,76,.22);color:var(--paper);padding:13px 14px;font-size:15px}
+.input:focus{outline:none;border-color:var(--gold)}
+.code-row{display:flex;gap:7px;margin-top:12px;width:100%}
+.digit{flex:1;max-width:44px;height:50px;border:1px solid rgba(201,168,76,.18);background:#130f0c;display:grid;place-items:center;color:var(--gold);font:20px monospace}
+.digit.filled{border-color:rgba(201,168,76,.55);background:#1a140f}
+.drop{min-height:240px;border:1px dashed rgba(201,168,76,.28);background:#17120e;display:grid;place-items:center;text-align:center;padding:25px;position:relative;transition:.2s;cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--gold);background:#1d1711}
+.drop input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.drop-icon{font:38px var(--display);color:var(--gold);margin-bottom:12px}
+.drop h2{font:600 16px var(--display);color:var(--paper)}
+.drop p{font-size:11.5px;color:#8e7e6a;margin-top:5px}
+.file-name{color:var(--gold);font-size:12px;margin-top:14px;word-break:break-word}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.status{display:none;margin-top:18px;padding:12px 14px;border:1px solid rgba(201,168,76,.2);font-size:12px;line-height:1.5}
+.status.show{display:block}
+.status.ok{color:#b9d39e;border-color:rgba(130,180,100,.28);background:rgba(100,160,80,.07)}
+.status.error{color:#e1a28d;border-color:rgba(180,80,50,.28);background:rgba(150,60,40,.07)}
+.admin-note{margin-top:22px;padding-top:22px;border-top:1px solid rgba(255,255,255,.06);font:13.5px/1.7 Georgia,serif;color:#857461}
+.admin-note strong{color:#c8b79d;font-weight:600}
+
+.footer{background:#100d0a;color:var(--muted);padding:36px 26px 24px;border-top:1px solid var(--line)}
+.footer-inner{max-width:1180px;margin:auto}
+.footer-bottom{font-size:11px;letter-spacing:.06em;text-align:center;color:#786958}
+.footer-bottom a{color:var(--paper-2);transition:.2s}
+.footer-bottom a:hover{color:var(--gold)}
+
+@media(max-width:860px){
+  :root{--nav:60px}
+  .nav-links{display:none}
+  .hamb{display:block}
+  .nav-inner{padding:0 18px}
+  .brand strong{font-size:19px}
+  .brand span{font-size:8px}
+  .admin-main{padding:45px 18px 60px}
+  .admin-card{grid-template-columns:1fr}
+  .admin-panel+.admin-panel{border-left:0;border-top:1px solid var(--line)}
+  .admin-panel{padding:24px 18px}
+  .actions .btn{flex:1;min-width:120px}
+}
+@media(max-width:480px){
+  .digit{height:44px;font-size:17px}
+  .code-row{gap:5px}
+  .actions{flex-direction:column}
+  .actions .btn{width:100%}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a class="brand" href="index.html" aria-label="DHĀTU home">
+      <strong>DHĀTU</strong>
+      <span id="navSub">Ancient Indian Metallurgy</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" data-page="home" id="navHome">Home</a></li>
+      <li><a href="index.html#metallurgy" id="navMetallurgy">Metallurgy</a></li>
+      <li><a href="chat.html" data-page="chat" id="navChat">Research Assistant</a></li>
+      <li><a href="admin.html" data-page="admin" id="navAdmin">Archive</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="lang-wrap">
+        <label class="sr" for="lang">Language</label>
+        <select class="lang" id="lang" aria-label="Select Language">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+          <option value="mr">मराठी</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+      <button class="hamb" id="hamb" aria-label="Open menu" aria-expanded="false"><i></i><i></i><i></i></button>
+    </div>
+  </div>
+</nav>
+
+<div class="drawer" id="drawer">
+  <ul>
+    <li><a href="index.html" id="drawerHome">Home</a></li>
+    <li><a href="index.html#metallurgy" id="drawerMetallurgy">Metallurgy</a></li>
+    <li><a href="chat.html" id="drawerChat">Research Assistant</a></li>
+    <li><a href="admin.html" id="drawerAdmin">Archive</a></li>
+  </ul>
+</div>
+
+<main class="admin-page">
+  <div class="admin-main">
+    <div class="admin-heading">
+      <div class="eyebrow" id="eyebrowText">Archive</div>
+      <h1 id="headingText">Add a source document.</h1>
+      <p id="subheadingText">Expand the collection by adding a verified PDF to the research archive.</p>
+    </div>
+
+    <div class="admin-card">
+      <section class="admin-panel">
+        <div class="field">
+          <label class="label" for="code" id="labelCode">Administrator code</label>
+          <input class="input" id="code" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="6-digit code">
+          <div class="code-row" aria-hidden="true">
+            <div class="digit" id="d0">•</div>
+            <div class="digit" id="d1">•</div>
+            <div class="digit" id="d2">•</div>
+            <div class="digit" id="d3">•</div>
+            <div class="digit" id="d4">•</div>
+            <div class="digit" id="d5">•</div>
+          </div>
+          <div class="hint" id="codeHint">Your code is used only when the document is submitted.</div>
+        </div>
+        <div class="admin-note">
+          <strong id="noteHead">Source quality matters.</strong><br>
+          <span id="noteBody">Use reference material that is relevant to the archive and suitable for research.</span>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="field">
+          <label class="label" id="labelDoc">Reference document</label>
+          <div class="drop" id="drop" tabindex="0">
+            <input id="file" type="file" accept="application/pdf,.pdf" aria-label="Choose PDF">
+            <div>
+              <div class="drop-icon">＋</div>
+              <h2 id="dropTitle">Choose a PDF</h2>
+              <p id="dropSub">Drag and drop here, or click to browse.</p>
+              <div class="file-name" id="filename"></div>
+            </div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-gold" id="submit" type="button">Add to Archive</button>
+          <button class="btn btn-outline" id="reset" type="button">Reset</button>
+        </div>
+        <div class="status" id="status" role="status" aria-live="polite"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-bottom">
+      <a href="index.html">DHĀTU</a> · <a href="chat.html" id="footerChatLink">Research Assistant</a> · <span id="footerText">Ancient Indian Metallurgy</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const TRANSLATIONS = {
+  hi: {
+    metaTitle: "अभिलेखागार — DHĀTU",
+    metaDesc: "DHĀTU अभिलेखागार में स्रोत दस्तावेज़ जोड़ें।",
+    navSub: "प्राचीन भारतीय धातुकर्म",
+    navHome: "मुख्य पृष्ठ",
+    navMetallurgy: "धातुकर्म",
+    navChat: "शोध सहायक",
+    navAdmin: "अभिलेखागार",
+    eyebrowText: "अभिलेखागार",
+    headingText: "एक स्रोत दस्तावेज़ जोड़ें।",
+    subheadingText: "शोध अभिलेखागार में एक सत्यापित पीडीएफ जोड़कर संग्रह का विस्तार करें।",
+    labelCode: "प्रशासक कोड",
+    placeholderCode: "6-अंकों का कोड",
+    codeHint: "आपके कोड का उपयोग केवल दस्तावेज़ सबमिट करते समय किया जाता है।",
+    noteHead: "स्रोत की गुणवत्ता महत्वपूर्ण है।",
+    noteBody: "ऐसी संदर्भ सामग्री का उपयोग करें जो अभिलेखागार के लिए प्रासंगिक और शोध के लिए उपयुक्त हो।",
+    labelDoc: "संदर्भ दस्तावेज़",
+    dropTitle: "एक पीडीएफ चुनें",
+    dropSub: "यहाँ खींचकर छोड़ें, या चुनने के लिए क्लिक करें।",
+    submitBtn: "अभिलेखागार में जोड़ें",
+    resetBtn: "रीसेट करें",
+    submittingBtn: "जोड़ा जा रहा है…",
+    footerChatLink: "शोध सहायक",
+    footerText: "प्राचीन भारतीय धातुकर्म",
+    errCodeInput: "6-अंकों का प्रशासक कोड दर्ज करें।",
+    errSelectFile: "आगे बढ़ने से पहले एक पीडीएफ दस्तावेज़ चुनें।",
+    errInvalidPdf: "कृपया एक पीडीएफ दस्तावेज़ चुनें।",
+    successMsg: "दस्तावेज़ को अभिलेखागार में सफलतापूर्वक जोड़ दिया गया है।",
+    errCodeInvalid: "प्रशासक कोड अमान्य है।",
+    errTooLarge: "दस्तावेज़ अभिलेखागार के लिए बहुत बड़ा है।",
+    errOnlyPdf: "केवल पीडीएफ दस्तावेज़ स्वीकार किए जाते हैं।",
+    errServer: "अभिलेखागार दस्तावेज़ को संसाधित नहीं कर सका। कृपया पुनः प्रयास करें।",
+    errGeneral: "अभिलेखागार इस समय अनुपलब्ध है। कृपया पुनः प्रयास करें।"
+  },
+  en: {
+    metaTitle: "Archive — DHĀTU",
+    metaDesc: "Add source documents to the DHĀTU archive.",
+    navSub: "Ancient Indian Metallurgy",
+    navHome: "Home",
+    navMetallurgy: "Metallurgy",
+    navChat: "Research Assistant",
+    navAdmin: "Archive",
+    eyebrowText: "Archive",
+    headingText: "Add a source document.",
+    subheadingText: "Expand the collection by adding a verified PDF to the research archive.",
+    labelCode: "Administrator code",
+    placeholderCode: "6-digit code",
+    codeHint: "Your code is used only when the document is submitted.",
+    noteHead: "Source quality matters.",
+    noteBody: "Use reference material that is relevant to the archive and suitable for research.",
+    labelDoc: "Reference document",
+    dropTitle: "Choose a PDF",
+    dropSub: "Drag and drop here, or click to browse.",
+    submitBtn: "Add to Archive",
+    resetBtn: "Reset",
+    submittingBtn: "Adding…",
+    footerChatLink: "Research Assistant",
+    footerText: "Ancient Indian Metallurgy",
+    errCodeInput: "Enter the 6-digit administrator code.",
+    errSelectFile: "Select a PDF document before continuing.",
+    errInvalidPdf: "Please choose a PDF document.",
+    successMsg: "The document has been added to the archive successfully.",
+    errCodeInvalid: "The administrator code is incorrect.",
+    errTooLarge: "The document is too large for the archive.",
+    errOnlyPdf: "Only PDF documents are accepted.",
+    errServer: "The archive could not process the document. Please try again.",
+    errGeneral: "The archive is unavailable right now. Please try again."
+  },
+  mr: {
+    metaTitle: "संग्रह — DHĀTU",
+    metaDesc: "DHĀTU संग्रहात संदर्भ दस्तऐवज जोडा.",
+    navSub: "प्राचीन भारतीय धातुकर्म",
+    navHome: "मुख्य पृष्ठ",
+    navMetallurgy: "धातुकर्म",
+    navChat: "संशोधन सहाय्यक",
+    navAdmin: "संग्रह",
+    eyebrowText: "संग्रह",
+    headingText: "दस्तऐवज जोडा.",
+    subheadingText: "सत्यापित पीडीएफ जोडून संशोधन संग्रहाचा विस्तार करा.",
+    labelCode: "प्रशासक कोड",
+    placeholderCode: "6-अंकी कोड",
+    codeHint: "हा कोड फक्त दस्तऐवज पाठवताना वापरला जातो.",
+    noteHead: "दर्जा महत्त्वाचा आहे.",
+    noteBody: "संशोधनासाठी योग्य आणि अचूक संदर्भ साहित्य वापरा.",
+    labelDoc: "संदर्भ दस्तऐवज",
+    dropTitle: "एक पीडीएफ निवडा",
+    dropSub: "येथे ड्रॅग करा किंवा निवडण्यासाठी क्लिक करा.",
+    submitBtn: "संग्रहात जोडा",
+    resetBtn: "रीसेट",
+    submittingBtn: "जोडत आहे…",
+    footerChatLink: "संशोधन सहाय्यक",
+    footerText: "प्राचीन भारतीय धातुकर्म",
+    errCodeInput: "6-अंकी प्रशासक कोड प्रविष्ट करा.",
+    errSelectFile: "पुढे जाण्यापूर्वी एक पीडीएफ निवडा.",
+    errInvalidPdf: "कृपया एक पीडीएफ दस्तऐवज निवडा.",
+    successMsg: "दस्तऐवज संग्रहात यशस्वीरित्या जोडला गेला आहे.",
+    errCodeInvalid: "प्रशासक कोड चुकीचा आहे.",
+    errTooLarge: "दस्तऐवज संग्रहासाठी खूप मोठा आहे.",
+    errOnlyPdf: "फक्त पीडीएफ दस्तऐवज स्वीकारले जातात.",
+    errServer: "दस्तऐवज जोडण्यात अडचण आली. पुन्हा प्रयत्न करा.",
+    errGeneral: "संग्रह प्रणाली उपलब्ध नाही. कृपया पुन्हा प्रयत्न करा."
+  },
+  fr: {
+    metaTitle: "Archives — DHĀTU",
+    metaDesc: "Ajouter des documents sources à l'archive DHĀTU.",
+    navSub: "Métallurgie de l'Inde Ancienne",
+    navHome: "Accueil",
+    navMetallurgy: "Métallurgie",
+    navChat: "Assistant de Recherche",
+    navAdmin: "Archives",
+    eyebrowText: "Archives",
+    headingText: "Ajouter un document source.",
+    subheadingText: "Enrichissez la collection en ajoutant un PDF vérifié à l'archive de recherche.",
+    labelCode: "Code administrateur",
+    placeholderCode: "Code à 6 chiffres",
+    codeHint: "Votre code est utilisé uniquement lors de la soumission du document.",
+    noteHead: "La qualité des sources est essentielle.",
+    noteBody: "Utilisez du matériel de référence pertinent pour l'archive et adapté à la recherche.",
+    labelDoc: "Document de référence",
+    dropTitle: "Choisir un PDF",
+    dropSub: "Glissez et déposez ici, ou cliquez pour parcourir.",
+    submitBtn: "Ajouter à l'Archive",
+    resetBtn: "Réinitialiser",
+    submittingBtn: "Ajout en cours…",
+    footerChatLink: "Assistant de Recherche",
+    footerText: "Métallurgie de l'Inde Ancienne",
+    errCodeInput: "Entrez le code administrateur à 6 chiffres.",
+    errSelectFile: "Sélectionnez un document PDF avant de continuer.",
+    errInvalidPdf: "Veuillez choisir un document PDF.",
+    successMsg: "Le document a été ajouté à l'archive avec succès.",
+    errCodeInvalid: "Le code administrateur est incorrect.",
+    errTooLarge: "Le document est trop volumineux pour l'archive.",
+    errOnlyPdf: "Seuls les documents PDF sont acceptés.",
+    errServer: "L'archive n'a pas pu traiter le document. Veuillez réessayer.",
+    errGeneral: "L'archive est indisponible pour le moment. Veuillez réessayer."
+  }
+};
+
+const BASE_URL = window.location.origin;
+let currentLanguage = localStorage.getItem('dhatu_lang') || 'hi';
+
+function getActiveTranslations(){
+  return TRANSLATIONS[currentLanguage] || TRANSLATIONS.hi;
+}
+
+function applyLanguage(lang){
+  currentLanguage = lang;
+  localStorage.setItem('dhatu_lang', lang);
+  const t = getActiveTranslations();
+
+  document.documentElement.lang = lang;
+  document.title = t.metaTitle;
+  const metaDesc = document.getElementById('metaDesc');
+  if(metaDesc) metaDesc.content = t.metaDesc;
+
+  const setText = (id, val) => { const el = document.getElementById(id); if(el && val !== undefined) el.textContent = val; };
+
+  setText('navSub', t.navSub);
+  setText('navHome', t.navHome);
+  setText('navMetallurgy', t.navMetallurgy);
+  setText('navChat', t.navChat);
+  setText('navAdmin', t.navAdmin);
+
+  setText('drawerHome', t.navHome);
+  setText('drawerMetallurgy', t.navMetallurgy);
+  setText('drawerChat', t.navChat);
+  setText('drawerAdmin', t.navAdmin);
+
+  setText('eyebrowText', t.eyebrowText);
+  setText('headingText', t.headingText);
+  setText('subheadingText', t.subheadingText);
+  setText('labelCode', t.labelCode);
+  setText('codeHint', t.codeHint);
+  setText('noteHead', t.noteHead);
+  setText('noteBody', t.noteBody);
+  setText('labelDoc', t.labelDoc);
+  setText('dropTitle', t.dropTitle);
+  setText('dropSub', t.dropSub);
+  setText('submit', t.submitBtn);
+  setText('reset', t.resetBtn);
+  setText('footerChatLink', t.footerChatLink);
+  setText('footerText', t.footerText);
+
+  const codeInput = document.getElementById('code');
+  if(codeInput) codeInput.placeholder = t.placeholderCode;
+
+  const langSelect = document.getElementById('lang');
+  if(langSelect && langSelect.value !== lang) langSelect.value = lang;
+}
+
+function setupNavigation(page){
+  const links = document.querySelectorAll('.nav-links a');
+  links.forEach(a => { if(a.dataset.page === page) a.setAttribute('aria-current','page'); });
+  const h = document.getElementById('hamb'), d = document.getElementById('drawer');
+  h?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = d.classList.toggle('open');
+    h.setAttribute('aria-expanded', String(open));
+  });
+  d?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    d.classList.remove('open');
+    h?.setAttribute('aria-expanded', 'false');
+  }));
+  document.addEventListener('click', (e) => {
+    if(d && d.classList.contains('open') && !d.contains(e.target) && !h?.contains(e.target)){
+      d.classList.remove('open');
+      h?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  const langSelect = document.getElementById('lang');
+  if(langSelect) {
+    langSelect.value = currentLanguage;
+    langSelect.addEventListener('change', () => applyLanguage(langSelect.value));
+  }
+  applyLanguage(currentLanguage);
+}
+
+setupNavigation('admin');
+
+const code = document.getElementById('code');
+const file = document.getElementById('file');
+const drop = document.getElementById('drop');
+const filename = document.getElementById('filename');
+const submit = document.getElementById('submit');
+const reset = document.getElementById('reset');
+const status = document.getElementById('status');
+const digits = [0,1,2,3,4,5].map(i => document.getElementById(`d${i}`));
+
+function showStatus(type, msg){
+  status.className = `status show ${type}`;
+  status.textContent = msg;
+}
+function clearStatus(){
+  status.className = 'status';
+  status.textContent = '';
+}
+
+code?.addEventListener('input', () => {
+  code.value = code.value.replace(/\D/g, '').slice(0, 6);
+  digits.forEach((d, i) => {
+    if(d) {
+      d.textContent = code.value[i] || '•';
+      d.classList.toggle('filled', i < code.value.length);
+    }
+  });
+});
+
+function validPdf(f){
+  return f && (f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+}
+
+function pick(f){
+  if(!f) return;
+  const t = getActiveTranslations();
+  if(!validPdf(f)){
+    file.value = '';
+    filename.textContent = '';
+    showStatus('error', t.errInvalidPdf);
+    return;
+  }
+  filename.textContent = `${f.name} · ${Math.max(0.1, f.size / 1024 / 1024).toFixed(2)} MB`;
+  clearStatus();
+}
+
+file?.addEventListener('change', () => pick(file.files[0]));
+['dragenter', 'dragover'].forEach(e => drop?.addEventListener(e, x => { x.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(e => drop?.addEventListener(e, x => { x.preventDefault(); drop.classList.remove('over'); }));
+drop?.addEventListener('drop', e => {
+  const f = e.dataTransfer.files[0];
+  if(f){
+    const dt = new DataTransfer();
+    dt.items.add(f);
+    file.files = dt.files;
+    pick(f);
+  }
+});
+
+submit?.addEventListener('click', async () => {
+  clearStatus();
+  const t = getActiveTranslations();
+  const c = code.value.trim(), f = file.files[0];
+  if(!/^\d{6}$/.test(c)){
+    showStatus('error', t.errCodeInput);
+    code.focus();
+    return;
+  }
+  if(!validPdf(f)){
+    showStatus('error', t.errSelectFile);
+    return;
+  }
+  submit.disabled = true;
+  submit.textContent = t.submittingBtn;
+
+  const data = new FormData();
+  data.append('pdf', f);
+
+  try{
+    const url = `${BASE_URL}/ai/admin/upload?code=${encodeURIComponent(c)}`;
+    const res = await fetch(url, { method: 'POST', body: data });
+    if(res.status === 401 || res.status === 403) throw new Error('code');
+    if(res.status === 413) throw new Error('size');
+    if(res.status === 415) throw new Error('type');
+    if(!res.ok) throw new Error('server');
+    showStatus('ok', t.successMsg);
+    code.value = '';
+    file.value = '';
+    filename.textContent = '';
+    digits.forEach(d => { if(d){ d.textContent = '•'; d.classList.remove('filled'); } });
+  }catch(e){
+    const m = {
+      code: t.errCodeInvalid,
+      size: t.errTooLarge,
+      type: t.errOnlyPdf,
+      server: t.errServer
+    };
+    showStatus('error', m[e.message] || t.errGeneral);
+  }finally{
+    submit.disabled = false;
+    submit.textContent = t.submitBtn;
+  }
+});
+
+reset?.addEventListener('click', () => {
+  code.value = '';
+  file.value = '';
+  filename.textContent = '';
+  digits.forEach(d => { if(d){ d.textContent = '•'; d.classList.remove('filled'); } });
+  clearStatus();
+  code.focus();
+});
+</script>
+</body>
+</html>

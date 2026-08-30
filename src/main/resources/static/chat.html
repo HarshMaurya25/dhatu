@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="hi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<title id="metaTitle">शोध सहायक — DHĀTU</title>
+<meta id="metaDesc" name="description" content="प्राचीन भारतीय धातुकर्म के बारे में प्रश्न पूछें।">
+<style>
+:root{
+  --ink:#17130f;--ink-2:#211a14;--ink-3:#2d2117;
+  --paper:#f4ecd9;--paper-2:#e8dbc0;--muted:#9a8a74;
+  --gold:#c9a84c;--gold-2:#e2c875;--copper:#a86d45;
+  --line:rgba(201,168,76,.18);--white:#fffaf0;
+  --display:Georgia,"Times New Roman",serif;
+  --body:"Trebuchet MS",Arial,sans-serif;
+  --nav:68px;--ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--body);background:#0f0c09;color:var(--ink);line-height:1.65}
+a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
+button{cursor:pointer}::selection{background:var(--gold);color:var(--ink)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+
+.nav{position:fixed;z-index:1000;top:0;left:0;right:0;height:var(--nav);background:rgba(23,19,15,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-inner{height:100%;max-width:1180px;margin:auto;padding:0 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;flex-direction:column;line-height:1;min-width:max-content}
+.brand strong{font:700 22px/1 var(--display);letter-spacing:.16em;color:var(--gold)}
+.brand span{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--paper-2);transition:.2s;padding:6px 0}
+.nav-links a:hover,.nav-links a[aria-current=page]{color:var(--gold)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.lang-wrap{position:relative}
+.lang{appearance:none;-webkit-appearance:none;background:#211913;color:var(--paper-2);border:1px solid var(--line);padding:7px 28px 7px 10px;font-size:11px;border-radius:4px;cursor:pointer}
+.lang-wrap::after{content:"▾";position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--gold);pointer-events:none;font-size:10px}
+.lang option{background:#1a1410;color:var(--paper)}
+.hamb{display:none;background:none;border:0;padding:8px;cursor:pointer;color:var(--paper-2)}
+.hamb i{display:block;width:22px;height:2px;background:var(--paper-2);margin:4px 0;transition:.25s}
+.drawer{display:none;position:fixed;z-index:999;top:var(--nav);left:0;right:0;background:rgba(23,19,15,.98);border-bottom:1px solid var(--line);padding:24px 20px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.drawer.open{display:block;animation:drawerIn .22s ease-out}
+.drawer ul{list-style:none;display:grid;gap:16px}
+.drawer a{color:var(--paper-2);font-size:14px;letter-spacing:.12em;text-transform:uppercase;display:block;padding:4px 0}
+.drawer a:hover{color:var(--gold)}
+@keyframes drawerIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+.chat-shell{height:100dvh;height:100vh;background:#0f0c09;padding-top:var(--nav);display:flex;overflow:hidden}
+.chat-app{width:100%;height:100%;display:flex;min-width:0}
+.chat-side{width:290px;flex:0 0 290px;background:#17120e;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow-y:auto}
+.chat-side-top{padding:22px;border-bottom:1px solid var(--line)}
+.chat-side-brand{font:600 22px var(--display);color:var(--paper);letter-spacing:.02em}
+.chat-side-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.new-chat{width:100%;margin-top:18px;padding:11px 14px;border:1px solid rgba(201,168,76,.28);background:rgba(201,168,76,.05);color:var(--gold);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;transition:.2s}
+.new-chat:hover{background:rgba(201,168,76,.12);border-color:var(--gold)}
+.chat-side-section{padding:22px;flex:1}
+.side-label{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.prompt{display:block;width:100%;text-align:left;background:none;border:0;color:#b9aa95;font:13.5px/1.5 Georgia,serif;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:color .2s;cursor:pointer}
+.prompt:hover{color:var(--gold)}
+
+.chat-main{flex:1;min-width:0;display:flex;flex-direction:column;background:#f0e8d6;height:100%}
+.chat-topbar{height:68px;flex:0 0 68px;background:rgba(246,239,222,.96);border-bottom:1px solid #d8ccb4;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:12px}
+.agent{display:flex;align-items:center;gap:12px;min-width:0}
+.agent-mark{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--gold);font:600 16px var(--display);flex-shrink:0}
+.agent-info{min-width:0}
+.agent-name{font:600 15px var(--display);color:#241c14;line-height:1.2}
+.agent-state{font-size:10.5px;color:#8a7a65;margin-top:2px}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.user-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(185,147,72,.15);border:1px solid rgba(185,147,72,.3);padding:4px 10px;border-radius:14px;font-size:11px;color:#493826;cursor:pointer;transition:.2s}
+.user-badge:hover{background:rgba(185,147,72,.25)}
+.clear{border:0;background:none;color:#88745d;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;transition:color .2s}
+.clear:hover{color:#8e4d2d}
+
+.messages{flex:1;overflow-y:auto;padding:26px clamp(16px,4vw,60px);scroll-behavior:smooth}
+.empty{height:100%;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 0}
+.empty-inner{max-width:520px;width:100%}
+.empty-mark{font:400 52px var(--display);color:#b18b49;margin-bottom:12px}
+.empty h1{font:600 28px var(--display);color:#2b2117}
+.empty p{font:15px/1.65 Georgia,serif;color:#7d6c58;margin-top:8px}
+.quick-prompts{display:none;margin-top:24px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip-btn{background:#fffaf0;border:1px solid #dcd1be;padding:8px 13px;border-radius:18px;font-size:12px;color:#4f4030;text-align:left;transition:.2s}
+.chip-btn:hover{border-color:var(--gold);color:var(--ink);background:#fff}
+
+.msg{display:flex;margin:0 auto 20px;max-width:860px;gap:11px;animation:rise .25s var(--ease)}
+.msg.user{justify-content:flex-end}
+.avatar{width:32px;height:32px;flex:0 0 32px;border-radius:50%;display:grid;place-items:center;background:#211913;color:var(--gold);font:12px var(--display);margin-top:2px}
+.msg.user .avatar{background:#b99348;color:#17130f;order:2}
+.bubble-wrap{max-width:min(80%,680px)}
+.bubble{padding:12px 16px;border-radius:16px;background:#fffaf0;color:#33291e;box-shadow:0 1px 3px rgba(40,30,20,.08);font-size:14.5px;line-height:1.65;word-break:break-word;overflow-wrap:anywhere}
+.msg.user .bubble{background:#dfc78f;color:#22180d;border-bottom-right-radius:4px}
+.msg.assistant .bubble{border-bottom-left-radius:4px}
+.bubble p+p{margin-top:8px}
+.bubble strong{font-weight:700}
+.bubble em{font-style:italic}
+.msg-meta{font-size:9.5px;color:#96866f;margin:5px 7px 0}
+.msg.user .msg-meta{text-align:right}
+.typing{display:flex;gap:4px;align-items:center;padding:4px 0}
+.typing i{width:6px;height:6px;background:#aa8b5a;border-radius:50%;animation:bounce 1.1s infinite}
+.typing i:nth-child(2){animation-delay:.14s}
+.typing i:nth-child(3){animation-delay:.28s}
+
+.composer{background:#f6efde;border-top:1px solid #d8ccb4;padding:12px clamp(12px,4vw,50px) 14px}
+.composer-row{max-width:860px;margin:auto;display:flex;align-items:flex-end;gap:8px}
+.composer textarea{flex:1;resize:none;max-height:140px;min-height:44px;border:1px solid #d4c5a9;border-radius:20px;background:#fffaf0;color:#2d241b;padding:11px 16px;line-height:1.45;font-size:14px;box-shadow:inset 0 1px 1px rgba(0,0,0,.03)}
+.composer textarea:focus{outline:none;border-color:#ae8a4c;box-shadow:0 0 0 2px rgba(174,138,76,.15)}
+.round{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;border:1px solid #d2c0a0;background:#fffaf0;color:#6f5d47;transition:.2s}
+.round:hover{border-color:#a98548;color:#8b632c}
+.send{background:#211913;color:var(--gold);border-color:#211913}
+.send:hover{background:#35271d;border-color:#35271d}
+.send:disabled{opacity:.4;cursor:not-allowed}
+.voice.recording{color:#fff;background:#9a3d28;border-color:#9a3d28;animation:pulse 1.2s infinite}
+.composer-note{max-width:860px;margin:5px auto 0;text-align:center;font-size:9.5px;color:#9c8c76}
+
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes bounce{0%,70%,100%{transform:translateY(0);opacity:.45}35%{transform:translateY(-4px);opacity:1}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(154,61,40,.4)}70%{box-shadow:0 0 0 8px rgba(154,61,40,0)}100%{box-shadow:0 0 0 0 rgba(154,61,40,0)}}
+
+/* Name Modal */
+.name-modal{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;padding:20px}
+.name-backdrop{position:absolute;inset:0;background:rgba(12,9,7,.75);backdrop-filter:blur(8px)}
+.name-card{position:relative;width:min(420px,100%);background:#f7efdf;border:1px solid #d5bd8a;box-shadow:0 24px 70px rgba(0,0,0,.4);padding:34px 28px 28px;text-align:center;animation:modalIn .25s var(--ease)}
+.name-modal.closing .name-card{animation:modalOut .18s ease forwards}
+.name-symbol{width:50px;height:50px;border-radius:50%;margin:0 auto 16px;display:grid;place-items:center;background:#211913;color:var(--gold);font:24px var(--display)}
+.name-kicker{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:#96733d;margin-bottom:8px}
+.name-card h2{font:600 28px/1.2 var(--display);color:#2a2017}
+.name-card p{font:14px/1.6 Georgia,serif;color:#796a57;margin:10px auto 22px;max-width:320px}
+.name-card label{display:block;text-align:left;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#80663e;margin-bottom:6px}
+.name-input{width:100%;height:46px;border:1px solid #cdbb9d;background:#fffaf0;color:#2c231a;padding:0 14px;font-size:15px;text-align:left;border-radius:3px}
+.name-input:focus{outline:none;border-color:#ad8849;box-shadow:0 0 0 3px rgba(173,136,73,.15)}
+.btn-gold{background:var(--gold);color:var(--ink);border:1px solid var(--gold);font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.btn-gold:hover{background:var(--gold-2)}
+.name-submit{width:100%;margin-top:14px;height:46px}
+.name-error{height:18px;margin-top:6px;color:#9a4932;font-size:11.5px;text-align:left}
+
+@keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes modalOut{to{opacity:0;transform:translateY(6px) scale(.98)}}
+
+@media(max-width:860px){
+  :root{--nav:60px}
+  .nav-links{display:none}
+  .hamb{display:block}
+  .nav-inner{padding:0 18px}
+  .brand strong{font-size:19px}
+  .brand span{font-size:8px}
+  .chat-side{display:none}
+  .chat-topbar{padding:0 16px;height:62px;flex-basis:62px}
+  .messages{padding:20px 12px}
+  .bubble-wrap{max-width:88%}
+  .composer{padding:9px 10px 12px}
+  .quick-prompts{display:flex}
+}
+@media(max-width:480px){
+  .agent-mark{width:34px;height:34px;font-size:14px}
+  .agent-name{font-size:13.5px}
+  .user-badge{font-size:10px;padding:3px 8px}
+  .clear{font-size:10px;padding:4px 6px}
+  .bubble{font-size:13.5px;padding:10px 13px}
+  .round{width:38px;height:38px;flex-basis:38px}
+  .composer textarea{min-height:40px;padding:9px 12px;font-size:13.5px}
+  .name-card{padding:28px 20px 20px}
+  .name-card h2{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a class="brand" href="index.html" aria-label="DHĀTU home">
+      <strong>DHĀTU</strong>
+      <span id="navSub">Ancient Indian Metallurgy</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" data-page="home" id="navHome">Home</a></li>
+      <li><a href="index.html#metallurgy" id="navMetallurgy">Metallurgy</a></li>
+      <li><a href="chat.html" data-page="chat" id="navChat">Research Assistant</a></li>
+      <li><a href="admin.html" data-page="admin" id="navAdmin">Archive</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="lang-wrap">
+        <label class="sr" for="lang">Language</label>
+        <select class="lang" id="lang" aria-label="Select Language">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+          <option value="mr">मराठी</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+      <button class="hamb" id="hamb" aria-label="Open menu" aria-expanded="false"><i></i><i></i><i></i></button>
+    </div>
+  </div>
+</nav>
+
+<div class="drawer" id="drawer">
+  <ul>
+    <li><a href="index.html" id="drawerHome">Home</a></li>
+    <li><a href="index.html#metallurgy" id="drawerMetallurgy">Metallurgy</a></li>
+    <li><a href="chat.html" id="drawerChat">Research Assistant</a></li>
+    <li><a href="admin.html" id="drawerAdmin">Archive</a></li>
+  </ul>
+</div>
+
+<main class="chat-shell">
+<div class="chat-app">
+  <aside class="chat-side" aria-label="Conversation tools">
+    <div class="chat-side-top">
+      <div class="chat-side-brand" id="sideBrand">Research Assistant</div>
+      <div class="chat-side-sub" id="sideSub">DHĀTU Archive</div>
+      <button class="new-chat" id="newChat">New conversation</button>
+    </div>
+    <div class="chat-side-section">
+      <div class="side-label" id="sideLabel">Explore</div>
+      <div id="sidePromptsList">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </aside>
+
+  <section class="chat-main">
+    <header class="chat-topbar">
+      <div class="agent">
+        <div class="agent-mark">ध</div>
+        <div class="agent-info">
+          <div class="agent-name" id="topAgentName">Dhātu</div>
+          <div class="agent-state" id="topAgentState">Archive assistant · Ready</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <div class="user-badge" id="userBadge" title="Click to change your name">
+          <span id="userNameBadge">Scholar</span> ✎
+        </div>
+        <button class="clear" id="clear">Clear</button>
+      </div>
+    </header>
+
+    <div class="messages" id="messages" role="log" aria-live="polite">
+      <div class="empty" id="empty">
+        <div class="empty-inner">
+          <div class="empty-mark">धातु</div>
+          <h1 id="emptyTitle">What would you like to explore?</h1>
+          <p id="emptySub">Ask about metals, techniques, places, texts or objects from the DHĀTU archive.</p>
+          <div class="quick-prompts" id="quickPrompts">
+            <!-- populated by JS for mobile -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form class="composer" id="composer">
+      <div class="composer-row">
+        <label class="sr" for="question">Message</label>
+        <textarea id="question" rows="1" placeholder="Ask about ancient Indian metallurgy…" autocomplete="off"></textarea>
+        <button type="button" class="round voice" id="voice" aria-label="Voice input" title="Voice input">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3M9 22h6"/></svg>
+        </button>
+        <button type="submit" class="round send" id="send" aria-label="Send message" title="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+      <div class="composer-note" id="composerNote">Enter to send · Shift + Enter for a new line</div>
+    </form>
+  </section>
+</div>
+</main>
+
+<script>
+const TRANSLATIONS = {
+  hi: {
+    metaTitle: "शोध सहायक — DHĀTU",
+    metaDesc: "प्राचीन भारतीय धातुकर्म के बारे में प्रश्न पूछें।",
+    navSub: "प्राचीन भारतीय धातुकर्म",
+    navHome: "मुख्य पृष्ठ",
+    navMetallurgy: "धातुकर्म",
+    navChat: "शोध सहायक",
+    navAdmin: "अभिलेखागार",
+    sideBrand: "शोध सहायक",
+    sideSub: "DHĀTU अभिलेखागार",
+    newChat: "नई बातचीत",
+    sideLabel: "अन्वेषण करें",
+    prompts: [
+      { label: "दिल्ली के लौह स्तंभ में जंग क्यों नहीं लगी?", query: "दिल्ली का लौह स्तंभ इतने लंबे समय तक जंग से कैसे सुरक्षित रहा?" },
+      { label: "वूट्ज़ स्टील क्या है?", query: "वूट्ज़ स्टील क्या है और इसे भारत में कैसे बनाया जाता था?" },
+      { label: "जावर में जस्ता आसवन कैसे होता था?", query: "जावर की खदानों में जस्ता आसवन प्रक्रिया का वर्णन करें।" },
+      { label: "अर्थशास्त्र में धातुकर्म के बारे में क्या है?", query: "अर्थशास्त्र में खनन और धातुकर्म के बारे में क्या कहा गया है?" },
+      { label: "मोम-ढलाई (लॉस्ट-वैक्स) तकनीक?", query: "प्राचीन भारत में मोम-ढलाई (लॉस्ट-वैक्स) तकनीक का उपयोग कैसे किया जाता था?" }
+    ],
+    agentName: "धातु",
+    agentState: "अभिलेखागार सहायक · तैयार",
+    clear: "साफ़ करें",
+    emptyTitle: "आप क्या जानना चाहते हैं?",
+    emptySub: "DHĀTU अभिलेखागार से धातुओं, तकनीकों, स्थानों, ग्रंथों या वस्तुओं के बारे में पूछें।",
+    placeholder: "प्राचीन भारतीय धातुकर्म के बारे में पूछें…",
+    composerNote: "भेजने के लिए Enter दबाएं · नई पंक्ति के लिए Shift + Enter",
+    userPrefix: "आप",
+    modalKicker: "DHĀTU में आपका स्वागत है",
+    modalTitle: "हम आपको किस नाम से संबोधित करें?",
+    modalDesc: "बातचीत के दौरान आपका नाम आपके संदेशों के साथ दिखाई देगा और इस डिवाइस पर सुरक्षित रहेगा।",
+    modalLabel: "आपका नाम",
+    modalPlaceholder: "अपना नाम दर्ज करें",
+    modalBtn: "आगे बढ़ें",
+    modalError: "आगे बढ़ने के लिए कृपया अपना नाम दर्ज करें।",
+    defaultUser: "शोधार्थी",
+    errUnreachable: "मैं इस समय अभिलेखागार से जुड़ने में असमर्थ हूँ। कृपया कुछ क्षणों बाद पुनः प्रयास करें।",
+    errNoAnswer: "अभिलेखागार में कोई उत्तर नहीं मिला। कृपया प्रश्न को किसी अन्य तरीके से पूछें।"
+  },
+  en: {
+    metaTitle: "Research Assistant — DHĀTU",
+    metaDesc: "Ask questions about ancient Indian metallurgy.",
+    navSub: "Ancient Indian Metallurgy",
+    navHome: "Home",
+    navMetallurgy: "Metallurgy",
+    navChat: "Research Assistant",
+    navAdmin: "Archive",
+    sideBrand: "Research Assistant",
+    sideSub: "DHĀTU Archive",
+    newChat: "New conversation",
+    sideLabel: "Explore",
+    prompts: [
+      { label: "How did the Iron Pillar resist corrosion?", query: "How was the Iron Pillar of Delhi able to resist corrosion for so long?" },
+      { label: "What is Wootz steel?", query: "What is Wootz steel and how was it produced in India?" },
+      { label: "How was zinc distilled at Zawar?", query: "Describe zinc distillation at the Zawar mines." },
+      { label: "What does the Arthashastra say about metallurgy?", query: "What does the Arthashastra say about mining and metallurgy?" },
+      { label: "How did lost-wax casting work?", query: "How was lost-wax casting used in ancient India?" }
+    ],
+    agentName: "Dhātu",
+    agentState: "Archive assistant · Ready",
+    clear: "Clear",
+    emptyTitle: "What would you like to explore?",
+    emptySub: "Ask about metals, techniques, places, texts or objects from the DHĀTU archive.",
+    placeholder: "Ask about ancient Indian metallurgy…",
+    composerNote: "Enter to send · Shift + Enter for a new line",
+    userPrefix: "You",
+    modalKicker: "Welcome to DHĀTU",
+    modalTitle: "What should we call you?",
+    modalDesc: "Your name will appear beside your messages and stay saved on this device.",
+    modalLabel: "Your name",
+    modalPlaceholder: "Enter your name",
+    modalBtn: "Continue",
+    modalError: "Please enter your name to continue.",
+    defaultUser: "Scholar",
+    errUnreachable: "I’m unable to reach the archive right now. Please try again in a moment.",
+    errNoAnswer: "I could not find an answer in the archive. Try asking the question another way."
+  },
+  mr: {
+    metaTitle: "संशोधन सहाय्यक — DHĀTU",
+    metaDesc: "प्राचीन भारतीय धातुकर्माबद्दल प्रश्न विचारा.",
+    navSub: "प्राचीन भारतीय धातुकर्म",
+    navHome: "मुख्य पृष्ठ",
+    navMetallurgy: "धातुकर्म",
+    navChat: "संशोधन सहाय्यक",
+    navAdmin: "संग्रह",
+    sideBrand: "संशोधन सहाय्यक",
+    sideSub: "DHĀTU संग्रह",
+    newChat: "नवीन संभाषण",
+    sideLabel: "अन्वेषण करा",
+    prompts: [
+      { label: "लोहस्तंभाला गंज का लागला नाही?", query: "दिल्लीचा लोहस्तंभ इतकी वर्षे गंजापासून कसा सुरक्षित राहिला?" },
+      { label: "वुट्झ स्टील काय आहे?", query: "वुट्झ स्टील काय आहे आणि ते भारतात कसे बनवले जात असे?" },
+      { label: "जावरमध्ये जस्त शुद्धीकरण कसे होत असे?", query: "जावर खाणीतील जस्त शुद्धीकरण प्रक्रिया स्पष्ट करा." },
+      { label: "अर्थशास्त्रात धातुकर्माबद्दल काय आहे?", query: "अर्थशास्त्रात खाणकाम आणि धातुकर्माबद्दल काय लिहिले आहे?" },
+      { label: "मोम-ओतकाम तंत्रज्ञान कसे चालत असे?", query: "प्राचीन भारतात मोम-ओतकाम (लॉस्ट-वॅक्स) तंत्रज्ञानाचा वापर कसा केला जात असे?" }
+    ],
+    agentName: "धातू",
+    agentState: "संग्रह सहाय्यक · सज्ज",
+    clear: "साफ़ करा",
+    emptyTitle: "तुम्हाला काय जाणून घ्यायचे आहे?",
+    emptySub: "DHĀTU संग्रहातील धातू, तंत्रज्ञान, ठिकाणे किंवा ग्रंथांबद्दल विचारा.",
+    placeholder: "प्राचीन भारतीय धातुकर्माबद्दल विचारा…",
+    composerNote: "पाठवण्यासाठी Enter दाबा · नवीन ओळीसाठी Shift + Enter",
+    userPrefix: "तुम्ही",
+    modalKicker: "DHĀTU मध्ये आपले स्वागत आहे",
+    modalTitle: "आम्ही तुम्हाला कोणत्या नावाने संबोधू?",
+    modalDesc: "आपले नाव संदेशांसोबत दिसेल आणि या उपकरणावर जतन केले जाईल.",
+    modalLabel: "आपले नाव",
+    modalPlaceholder: "आपले नाव प्रविष्ट करा",
+    modalBtn: "पुढे चला",
+    modalError: "कृपया पुढे जाण्यासाठी आपले नाव प्रविष्ट करा.",
+    defaultUser: "अभ्यासक",
+    errUnreachable: "सध्या संग्रहाशी संपर्क साधता येत नाही. कृपया पुन्हा प्रयत्न करा.",
+    errNoAnswer: "संग्रहात उत्तर सापडले नाही. कृपया वेगळ्या प्रकारे प्रश्न विचारा."
+  },
+  fr: {
+    metaTitle: "Assistant de Recherche — DHĀTU",
+    metaDesc: "Posez des questions sur la métallurgie de l'Inde ancienne.",
+    navSub: "Métallurgie de l'Inde Ancienne",
+    navHome: "Accueil",
+    navMetallurgy: "Métallurgie",
+    navChat: "Assistant de Recherche",
+    navAdmin: "Archives",
+    sideBrand: "Assistant de Recherche",
+    sideSub: "Archive DHĀTU",
+    newChat: "Nouvelle conversation",
+    sideLabel: "Explorer",
+    prompts: [
+      { label: "Comment le pilier de fer a-t-il résisté?", query: "Comment le pilier de fer de Delhi a-t-il résisté à la corrosion?" },
+      { label: "Qu'est-ce que l'acier Wootz?", query: "Qu'est-ce que l'acier Wootz et comment était-il produit en Inde?" },
+      { label: "Comment le zinc était-il distillé à Zawar?", query: "Décrivez la distillation du zinc dans les mines de Zawar." },
+      { label: "Que dit l'Arthashastra sur la métallurgie?", query: "Que dit l'Arthashastra sur les mines et la métallurgie?" },
+      { label: "Comment fonctionnait la cire perdue?", query: "Comment la coulée à la cire perdue était-elle utilisée en Inde ancienne?" }
+    ],
+    agentName: "Dhātu",
+    agentState: "Assistant d'archive · Prêt",
+    clear: "Effacer",
+    emptyTitle: "Que souhaitez-vous explorer?",
+    emptySub: "Posez des questions sur les métaux, techniques, lieux ou textes de l'archive DHĀTU.",
+    placeholder: "Posez des questions sur la métallurgie de l'Inde ancienne…",
+    composerNote: "Entrée pour envoyer · Maj + Entrée pour un saut de ligne",
+    userPrefix: "Vous",
+    modalKicker: "Bienvenue à DHĀTU",
+    modalTitle: "Comment devons-nous vous appeler?",
+    modalDesc: "Votre nom apparaîtra à côté de vos messages et restera enregistré sur cet appareil.",
+    modalLabel: "Votre nom",
+    modalPlaceholder: "Entrez votre nom",
+    modalBtn: "Continuer",
+    modalError: "Veuillez entrer votre nom pour continuer.",
+    defaultUser: "Chercheur",
+    errUnreachable: "Impossible d'accéder à l'archive pour le moment. Veuillez réessayer.",
+    errNoAnswer: "Aucune réponse trouvée dans l'archive. Essayez de reformuler votre question."
+  }
+};
+
+const BASE_URL = window.location.origin;
+let currentLanguage = localStorage.getItem('dhatu_lang') || 'hi';
+let currentUsername = (localStorage.getItem('dhatu_username') || '').trim();
+
+function getActiveTranslations(){
+  return TRANSLATIONS[currentLanguage] || TRANSLATIONS.hi;
+}
+
+function updateUsernameBadge(){
+  const badge = document.getElementById('userNameBadge');
+  if(badge) badge.textContent = currentUsername || getActiveTranslations().defaultUser;
+}
+
+function showNameModal(force = false){
+  if(document.getElementById('nameModal')) return;
+  const t = getActiveTranslations();
+  const modal = document.createElement('div');
+  modal.id = 'nameModal';
+  modal.className = 'name-modal';
+  modal.innerHTML = `
+    <div class="name-backdrop"></div>
+    <section class="name-card" role="dialog" aria-modal="true" aria-labelledby="nameTitle">
+      <div class="name-symbol">ध</div>
+      <div class="name-kicker" id="modalKicker">${t.modalKicker}</div>
+      <h2 id="nameTitle">${t.modalTitle}</h2>
+      <p id="modalDesc">${t.modalDesc}</p>
+      <label for="visitorName" id="modalLabel">${t.modalLabel}</label>
+      <input id="visitorName" class="name-input" type="text" maxlength="40" autocomplete="name" placeholder="${t.modalPlaceholder}" value="${escapeHtml(currentUsername)}">
+      <button id="saveVisitorName" class="btn btn-gold name-submit" type="button">${t.modalBtn}</button>
+      <div class="name-error" id="nameError"></div>
+    </section>
+  `;
+  document.body.appendChild(modal);
+
+  const input = modal.querySelector('#visitorName');
+  const save = modal.querySelector('#saveVisitorName');
+  const error = modal.querySelector('#nameError');
+
+  const submit = () => {
+    const value = input.value.trim();
+    if(!value){
+      error.textContent = getActiveTranslations().modalError;
+      input.focus();
+      return;
+    }
+    currentUsername = value;
+    localStorage.setItem('dhatu_username', value);
+    updateUsernameBadge();
+    modal.classList.add('closing');
+    setTimeout(() => {
+      modal.remove();
+      document.getElementById('question')?.focus();
+    }, 180);
+  };
+
+  save.addEventListener('click', submit);
+  input.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
+  setTimeout(() => input.focus(), 80);
+}
+
+function ensureUsername(){
+  if(!currentUsername){
+    showNameModal();
+  } else {
+    updateUsernameBadge();
+  }
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+function formatText(raw){
+  let s = escapeHtml(raw);
+  s = s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  s = s.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  s = s.replace(/\n\n+/g,'</p><p>').replace(/\n/g,'<br>');
+  return `<p>${s}</p>`;
+}
+
+function timeNow(){
+  return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+
+function applyLanguage(lang){
+  currentLanguage = lang;
+  localStorage.setItem('dhatu_lang', lang);
+  const t = getActiveTranslations();
+
+  document.documentElement.lang = lang;
+  document.title = t.metaTitle;
+  const metaDesc = document.getElementById('metaDesc');
+  if(metaDesc) metaDesc.content = t.metaDesc;
+
+  const setText = (id, val) => { const el = document.getElementById(id); if(el && val !== undefined) el.textContent = val; };
+
+  setText('navSub', t.navSub);
+  setText('navHome', t.navHome);
+  setText('navMetallurgy', t.navMetallurgy);
+  setText('navChat', t.navChat);
+  setText('navAdmin', t.navAdmin);
+
+  setText('drawerHome', t.navHome);
+  setText('drawerMetallurgy', t.navMetallurgy);
+  setText('drawerChat', t.navChat);
+  setText('drawerAdmin', t.navAdmin);
+
+  setText('sideBrand', t.sideBrand);
+  setText('sideSub', t.sideSub);
+  setText('newChat', t.newChat);
+  setText('sideLabel', t.sideLabel);
+
+  setText('topAgentName', t.agentName);
+  setText('topAgentState', t.agentState);
+  setText('clear', t.clear);
+  setText('emptyTitle', t.emptyTitle);
+  setText('emptySub', t.emptySub);
+  setText('composerNote', t.composerNote);
+
+  const textarea = document.getElementById('question');
+  if(textarea) textarea.placeholder = t.placeholder;
+
+  updateUsernameBadge();
+
+  // Populate explore prompts in sidebar and mobile chips
+  const sideList = document.getElementById('sidePromptsList');
+  const quickList = document.getElementById('quickPrompts');
+
+  if(sideList && t.prompts){
+    sideList.innerHTML = t.prompts.map(p => `
+      <button type="button" class="prompt" data-query="${escapeHtml(p.query)}">${escapeHtml(p.label)}</button>
+    `).join('');
+  }
+  if(quickList && t.prompts){
+    quickList.innerHTML = t.prompts.map(p => `
+      <button type="button" class="chip-btn" data-query="${escapeHtml(p.query)}">${escapeHtml(p.label)}</button>
+    `).join('');
+  }
+
+  // Attach prompt click handlers
+  document.querySelectorAll('.prompt, .chip-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(textarea){
+        textarea.value = btn.dataset.query;
+        resizeTextarea();
+        textarea.focus();
+      }
+    });
+  });
+
+  const langSelect = document.getElementById('lang');
+  if(langSelect && langSelect.value !== lang) langSelect.value = lang;
+}
+
+function setupNavigation(page){
+  const links = document.querySelectorAll('.nav-links a');
+  links.forEach(a => { if(a.dataset.page === page) a.setAttribute('aria-current','page'); });
+  const h = document.getElementById('hamb'), d = document.getElementById('drawer');
+  h?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = d.classList.toggle('open');
+    h.setAttribute('aria-expanded', String(open));
+  });
+  d?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    d.classList.remove('open');
+    h?.setAttribute('aria-expanded', 'false');
+  }));
+  document.addEventListener('click', (e) => {
+    if(d && d.classList.contains('open') && !d.contains(e.target) && !h?.contains(e.target)){
+      d.classList.remove('open');
+      h?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  const langSelect = document.getElementById('lang');
+  if(langSelect) {
+    langSelect.value = currentLanguage;
+    langSelect.addEventListener('change', () => applyLanguage(langSelect.value));
+  }
+  applyLanguage(currentLanguage);
+}
+
+// Chat UI Elements
+const messages = document.getElementById('messages');
+const empty = document.getElementById('empty');
+const textarea = document.getElementById('question');
+const send = document.getElementById('send');
+const voice = document.getElementById('voice');
+const clear = document.getElementById('clear');
+const newChat = document.getElementById('newChat');
+const userBadge = document.getElementById('userBadge');
+
+let controller = null, streaming = false;
+
+userBadge?.addEventListener('click', () => showNameModal(true));
+
+function scrollDown(){
+  if(messages) messages.scrollTop = messages.scrollHeight;
+}
+
+function getUserInitial(){
+  const name = currentUsername || getActiveTranslations().defaultUser;
+  return (name || 'S').trim().charAt(0).toUpperCase();
+}
+
+function addMessage(role, text){
+  if(empty) empty.style.display = 'none';
+  const row = document.createElement('div');
+  row.className = `msg ${role}`;
+  const t = getActiveTranslations();
+  const isUser = role === 'user';
+  const avatarChar = isUser ? escapeHtml(getUserInitial()) : 'ध';
+  const metaName = isUser ? escapeHtml(currentUsername || t.userPrefix) : t.agentName;
+
+  row.innerHTML = `
+    <div class="avatar">${avatarChar}</div>
+    <div class="bubble-wrap">
+      <div class="bubble">${formatText(text)}</div>
+      <div class="msg-meta">${metaName} · ${timeNow()}</div>
+    </div>
+  `;
+  messages.appendChild(row);
+  scrollDown();
+  return row.querySelector('.bubble');
+}
+
+function addTyping(){
+  if(empty) empty.style.display = 'none';
+  const row = document.createElement('div');
+  row.className = 'msg assistant';
+  row.id = 'typing';
+  row.innerHTML = `
+    <div class="avatar">ध</div>
+    <div class="bubble-wrap">
+      <div class="bubble"><div class="typing"><i></i><i></i><i></i></div></div>
+    </div>
+  `;
+  messages.appendChild(row);
+  scrollDown();
+}
+
+function removeTyping(){
+  document.getElementById('typing')?.remove();
+}
+
+function setStreaming(v){
+  streaming = v;
+  if(send) send.disabled = v;
+  if(textarea) textarea.disabled = v;
+  if(voice) voice.disabled = v;
+}
+
+function resizeTextarea(){
+  if(!textarea) return;
+  textarea.style.height = 'auto';
+  textarea.style.height = Math.min(textarea.scrollHeight, 140) + 'px';
+}
+textarea?.addEventListener('input', resizeTextarea);
+
+async function sendMessage(){
+  if(!textarea) return;
+  const q = textarea.value.trim();
+  if(!q || streaming) return;
+
+  if(!currentUsername){
+    showNameModal();
+    return;
+  }
+
+  textarea.value = '';
+  resizeTextarea();
+  addMessage('user', q);
+  addTyping();
+  setStreaming(true);
+
+  const t = getActiveTranslations();
+  const params = new URLSearchParams({ question: q, name: currentUsername });
+  const url = `${BASE_URL}/ai/bot/ask?${params.toString()}`;
+  controller = new AbortController();
+  let bubble = null, full = '';
+
+  try{
+    const res = await fetch(url, { method: 'GET', signal: controller.signal });
+    if(!res.ok) throw new Error('request');
+    if(!res.body) throw new Error('response');
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+
+    while(true){
+      const { done, value } = await reader.read();
+      if(done) break;
+      full += decoder.decode(value, { stream: true });
+      if(!bubble){
+        removeTyping();
+        bubble = addMessage('assistant', '');
+      }
+      bubble.innerHTML = formatText(full);
+      scrollDown();
+    }
+    full += decoder.decode();
+    removeTyping();
+    if(!bubble) bubble = addMessage('assistant', '');
+    bubble.innerHTML = formatText(full.trim() || t.errNoAnswer);
+  }catch(err){
+    removeTyping();
+    if(err.name === 'AbortError'){
+      if(bubble) bubble.innerHTML = formatText(full || 'Response stopped.');
+    }else{
+      addMessage('assistant', t.errUnreachable);
+    }
+  }finally{
+    controller = null;
+    setStreaming(false);
+    scrollDown();
+  }
+}
+
+send?.addEventListener('click', (e) => {
+  e.preventDefault();
+  sendMessage();
+});
+
+textarea?.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+function resetConversation(){
+  controller?.abort();
+  controller = null;
+  setStreaming(false);
+  messages.querySelectorAll('.msg').forEach(x => x.remove());
+  if(empty) empty.style.display = 'flex';
+  if(textarea) {
+    textarea.value = '';
+    resizeTextarea();
+    textarea.focus();
+  }
+}
+
+clear?.addEventListener('click', resetConversation);
+newChat?.addEventListener('click', resetConversation);
+
+// Voice Recognition
+if('SpeechRecognition' in window || 'webkitSpeechRecognition' in window){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new SR();
+  rec.continuous = false;
+  rec.interimResults = false;
+
+  const locales = { en: 'en-US', hi: 'hi-IN', mr: 'mr-IN', fr: 'fr-FR' };
+  const stopVoice = () => {
+    voice?.classList.remove('recording');
+    voice?.setAttribute('aria-label', 'Voice input');
+  };
+
+  rec.onresult = (e) => {
+    if(textarea && e.results[0]?.[0]?.transcript){
+      textarea.value = e.results[0][0].transcript;
+      resizeTextarea();
+    }
+    stopVoice();
+  };
+  rec.onerror = stopVoice;
+  rec.onend = stopVoice;
+
+  voice?.addEventListener('click', () => {
+    if(voice.classList.contains('recording')){
+      rec.stop();
+    }else{
+      rec.lang = locales[currentLanguage] || 'hi-IN';
+      try{
+        rec.start();
+        voice.classList.add('recording');
+        voice.setAttribute('aria-label', 'Stop voice input');
+      }catch(e){
+        stopVoice();
+      }
+    }
+  });
+}else if(voice){
+  voice.style.display = 'none';
+}
+
+setupNavigation('chat');
+ensureUsername();
+</script>
+</body>
+</html>

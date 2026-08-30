@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="hi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<title id="metaTitle">धातु — प्राचीन भारतीय धातुकर्म</title>
+<meta id="metaDesc" name="description" content="प्राचीन भारतीय धातुकर्म की खोज करने वाला एक इंटरैक्टिव अभिलेखागार।">
+<style>
+:root{
+  --ink:#17130f;--ink-2:#211a14;--ink-3:#2d2117;
+  --paper:#f4ecd9;--paper-2:#e8dbc0;--muted:#9a8a74;
+  --gold:#c9a84c;--gold-2:#e2c875;--copper:#a86d45;
+  --line:rgba(201,168,76,.18);--white:#fffaf0;
+  --display:Georgia,"Times New Roman",serif;
+  --body:"Trebuchet MS",Arial,sans-serif;
+  --nav:68px;--ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.65;overflow-x:hidden;max-width:100vw}
+a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
+button{cursor:pointer}::selection{background:var(--gold);color:var(--ink)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+
+.nav{position:fixed;z-index:1000;top:0;left:0;right:0;height:var(--nav);background:rgba(23,19,15,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-inner{height:100%;max-width:1180px;margin:auto;padding:0 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;flex-direction:column;line-height:1;min-width:max-content}
+.brand strong{font:700 22px/1 var(--display);letter-spacing:.16em;color:var(--gold)}
+.brand span{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--paper-2);transition:.2s;padding:6px 0}
+.nav-links a:hover,.nav-links a[aria-current=page]{color:var(--gold)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.lang-wrap{position:relative}
+.lang{appearance:none;-webkit-appearance:none;background:#211913;color:var(--paper-2);border:1px solid var(--line);padding:7px 28px 7px 10px;font-size:11px;border-radius:4px;cursor:pointer}
+.lang-wrap::after{content:"▾";position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--gold);pointer-events:none;font-size:10px}
+.lang option{background:#1a1410;color:var(--paper)}
+.hamb{display:none;background:none;border:0;padding:8px;cursor:pointer;color:var(--paper-2)}
+.hamb i{display:block;width:22px;height:2px;background:var(--paper-2);margin:4px 0;transition:.25s}
+.drawer{display:none;position:fixed;z-index:999;top:var(--nav);left:0;right:0;background:rgba(23,19,15,.98);border-bottom:1px solid var(--line);padding:24px 20px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.drawer.open{display:block;animation:drawerIn .22s ease-out}
+.drawer ul{list-style:none;display:grid;gap:16px}
+.drawer a{color:var(--paper-2);font-size:14px;letter-spacing:.12em;text-transform:uppercase;display:block;padding:4px 0}
+.drawer a:hover{color:var(--gold)}
+@keyframes drawerIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border:1px solid transparent;font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;transition:transform .2s var(--ease),background .2s,border-color .2s;text-align:center}
+.btn-gold{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.btn-gold:hover{background:var(--gold-2);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--paper-2);border-color:rgba(244,236,217,.28)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+
+.footer{background:#100d0a;color:var(--muted);padding:48px 26px 28px;border-top:1px solid var(--line)}
+.footer-inner{max-width:1180px;margin:auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:50px;padding-bottom:38px}
+.footer h3{font:700 20px var(--display);letter-spacing:.12em;color:var(--gold);margin-bottom:4px}
+.footer .sub{font-size:9px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:17px}
+.footer p,.footer a{font-size:13px;color:#8f806e}.footer p{max-width:400px;line-height:1.7}
+.footer h4{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.footer ul{list-style:none;display:grid;gap:9px}
+.footer a{transition:.2s}.footer a:hover{color:var(--paper-2)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:20px;font-size:10px;letter-spacing:.06em}
+
+.home-hero{min-height:100vh;background:radial-gradient(circle at 75% 35%,rgba(201,168,76,.12),transparent 34%),linear-gradient(135deg,#17130f 0%,#211a14 55%,#17130f 100%);color:var(--paper);display:grid;place-items:center;position:relative;overflow:hidden;padding:120px 26px 80px}
+.home-hero:before{content:"धातु";position:absolute;right:-2vw;bottom:-6vw;font:900 clamp(160px,28vw,400px)/1 var(--display);color:rgba(201,168,76,.035);pointer-events:none;user-select:none}
+.hero-inner{max-width:1180px;width:100%;position:relative;z-index:1}
+.eyebrow{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.hero-title{font:600 clamp(40px,6.8vw,92px)/1.02 var(--display);letter-spacing:-.025em;max-width:880px;word-break:break-word}
+.hero-title em{font-weight:400;color:var(--gold);font-style:italic}
+.hero-copy{max-width:690px;color:#b8a993;font:400 18px/1.75 Georgia,serif;margin:26px 0 30px}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;max-width:780px}
+.hero-tags span{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#cdbf9f;border:1px solid rgba(201,168,76,.25);background:rgba(201,168,76,.04);padding:7px 11px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+
+.section{padding:105px 26px}.section-inner{max-width:1180px;margin:auto}
+.kicker{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#9a6d37;margin-bottom:10px}
+.title{font:600 clamp(32px,4vw,54px)/1.12 var(--display);letter-spacing:-.02em;margin-bottom:20px}
+.lead{max-width:680px;color:#675948;font:18px/1.75 Georgia,serif}
+.about-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:80px;align-items:start;margin-top:45px}
+.about-text{font:18px/1.85 Georgia,serif;color:#4d4134}
+.about-text p+p{margin-top:20px}
+.quote{margin-top:28px;padding-left:20px;border-left:2px solid var(--gold);font-style:italic;color:#76624b}
+.stats{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #cdbf9f}
+.stat{padding:22px 15px 22px 0;border-bottom:1px solid #cdbf9f}
+.stat:nth-child(even){padding-left:15px;border-left:1px solid #cdbf9f}
+.stat-num{font:600 29px var(--display);color:#8d652f}
+.stat-label{font-size:11px;color:#766a5b;margin-top:4px;line-height:1.4}
+
+.metal-section{background:var(--ink);color:var(--paper)}
+.metal-section .title{color:var(--paper)}
+.metal-section .lead{color:#9d8e7a}
+.metal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(201,168,76,.15);margin-top:50px}
+.metal-card{background:#1c1713;padding:32px;min-height:290px;transition:.25s;display:flex;flex-direction:column}
+.metal-card:hover{background:#241c15;transform:translateY(-3px)}
+.symbol{font:600 28px var(--display);color:var(--gold);margin-bottom:30px}
+.metal-card h3{font:600 24px var(--display);margin-bottom:3px}
+.metal-card .native{font:italic 13px Georgia;color:#9b8060;margin-bottom:14px}
+.metal-card p.card-desc{font:14px/1.75 Arial,sans-serif;color:#968877;margin-top:auto}
+
+.cta{background:linear-gradient(120deg,#b89242,#d0b263);padding:85px 26px;text-align:center}
+.cta .title{color:var(--ink);max-width:700px;margin:0 auto 15px}
+.cta p{max-width:650px;margin:0 auto 28px;color:#40331f;font-size:16px}
+.cta .btn{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.cta .btn:hover{background:#281e15;border-color:#281e15;transform:translateY(-2px)}
+
+@media(max-width:860px){
+  :root{--nav:60px}
+  .nav-links{display:none}
+  .hamb{display:block}
+  .nav-inner{padding:0 18px}
+  .brand strong{font-size:19px}
+  .brand span{font-size:8px}
+  .about-grid{grid-template-columns:1fr;gap:40px}
+  .metal-grid{grid-template-columns:1fr}
+  .home-hero{padding:100px 18px 60px}
+  .section{padding:70px 18px}
+  .hero-copy{font-size:16px;margin:20px 0 24px}
+  .hero-title{font-size:clamp(36px,9.5vw,60px);line-height:1.08}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .cta{padding:60px 18px}
+}
+@media(max-width:480px){
+  .hero-actions{flex-direction:column;width:100%}
+  .hero-actions .btn{width:100%}
+  .stats{grid-template-columns:1fr}
+  .stat:nth-child(even){padding-left:0;border-left:none}
+  .stat{padding:16px 0}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a class="brand" href="index.html" aria-label="DHĀTU home">
+      <strong>DHĀTU</strong>
+      <span id="navSub">Ancient Indian Metallurgy</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" data-page="home" id="navHome">Home</a></li>
+      <li><a href="index.html#metallurgy" id="navMetallurgy">Metallurgy</a></li>
+      <li><a href="chat.html" data-page="chat" id="navChat">Research Assistant</a></li>
+      <li><a href="admin.html" data-page="admin" id="navAdmin">Archive</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="lang-wrap">
+        <label class="sr" for="lang">Language</label>
+        <select class="lang" id="lang" aria-label="Select Language">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+          <option value="mr">मराठी</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+      <button class="hamb" id="hamb" aria-label="Open menu" aria-expanded="false"><i></i><i></i><i></i></button>
+    </div>
+  </div>
+</nav>
+
+<div class="drawer" id="drawer">
+  <ul>
+    <li><a href="index.html" id="drawerHome">Home</a></li>
+    <li><a href="index.html#metallurgy" id="drawerMetallurgy">Metallurgy</a></li>
+    <li><a href="chat.html" id="drawerChat">Research Assistant</a></li>
+    <li><a href="admin.html" id="drawerAdmin">Archive</a></li>
+  </ul>
+</div>
+
+<main>
+<section class="home-hero">
+  <div class="hero-inner">
+    <div class="eyebrow" id="heroEyebrow">An Archive of Material Knowledge</div>
+    <h1 class="hero-title" id="heroTitle">Metallurgy in<br><em>Ancient India</em></h1>
+    <p class="hero-copy" id="heroCopy">A focused digital archive exploring the metals, techniques and traditions that shaped the technological history of the Indian subcontinent.</p>
+    <div class="hero-tags" id="heroTags">
+      <span>Iron & Steel</span>
+      <span>Copper & Bronze</span>
+      <span>Zinc</span>
+      <span>Wootz</span>
+      <span>Gold & Silver</span>
+      <span>Smelting</span>
+    </div>
+    <div class="hero-actions">
+      <a class="btn btn-gold" href="#metallurgy" id="heroBtnExplore">Explore the Archive</a>
+      <a class="btn btn-outline" href="chat.html" id="heroBtnChat">Open Research Assistant</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="about">
+  <div class="section-inner">
+    <div class="kicker" id="storyKicker">The Story</div>
+    <h2 class="title" id="storyTitle">A civilisation forged in metal.</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p id="storyP1">The Indian subcontinent has a long record of mining, smelting, alloying, casting and forging. From early copper working to crucible steel and zinc distillation, metallurgical practice developed through generations of observation and craft.</p>
+        <p id="storyP2">DHĀTU brings these traditions together as a readable research archive, giving visitors a place to explore the materials, processes and historical evidence behind them.</p>
+        <div class="quote" id="storyQuote">“The history of a civilisation can often be read in the materials it learned to transform.”</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-num" id="statNum1">4000+</div><div class="stat-label" id="statLabel1">Years of copper metallurgy in the subcontinent</div></div>
+        <div class="stat"><div class="stat-num" id="statNum2">Wootz</div><div class="stat-label" id="statLabel2">Indian crucible steel tradition</div></div>
+        <div class="stat"><div class="stat-num" id="statNum3">Zawar</div><div class="stat-label" id="statLabel3">Major centre of historic zinc production</div></div>
+        <div class="stat"><div class="stat-num" id="statNum4">Iron</div><div class="stat-label" id="statLabel4">A defining material of ancient technology</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section metal-section" id="metallurgy">
+  <div class="section-inner">
+    <div class="kicker" id="archiveKicker">The Archive</div>
+    <h2 class="title" id="archiveTitle">Materials & Traditions</h2>
+    <p class="lead" id="archiveLead">Explore the principal materials and techniques represented in the archive.</p>
+    <div class="metal-grid">
+      <article class="metal-card">
+        <div class="symbol">Fe</div>
+        <h3 id="metalIronTitle">Iron</h3>
+        <div class="native" id="metalIronSub">Lauha · लोह</div>
+        <p class="card-desc" id="metalIronDesc">Iron production, forging and the corrosion-resistant Iron Pillar tradition reveal sophisticated control of ore, furnace conditions and processing.</p>
+      </article>
+      <article class="metal-card">
+        <div class="symbol">W</div>
+        <h3 id="metalWootzTitle">Wootz Steel</h3>
+        <div class="native" id="metalWootzSub">Ukku · उक्कू</div>
+        <p class="card-desc" id="metalWootzDesc">Crucible steel produced in India became an important traded material, celebrated for its distinctive microstructure and performance.</p>
+      </article>
+      <article class="metal-card">
+        <div class="symbol">Cu</div>
+        <h3 id="metalCopperTitle">Copper & Bronze</h3>
+        <div class="native" id="metalCopperSub">Tāmra · ताम्र</div>
+        <p class="card-desc" id="metalCopperDesc">Early copper working and later alloying traditions supported tools, vessels, ornaments, ritual objects and sculpture.</p>
+      </article>
+      <article class="metal-card">
+        <div class="symbol">Zn</div>
+        <h3 id="metalZincTitle">Zinc</h3>
+        <div class="native" id="metalZincSub">Yashada · यशद</div>
+        <p class="card-desc" id="metalZincDesc">The mines of Zawar preserve important evidence for large-scale zinc distillation using specialised retorts.</p>
+      </article>
+      <article class="metal-card">
+        <div class="symbol">Au</div>
+        <h3 id="metalGoldTitle">Gold & Silver</h3>
+        <div class="native" id="metalGoldSub">Suvarna · Rūpya · सुवर्ण · रूप्य</div>
+        <p class="card-desc" id="metalGoldDesc">Historical texts describe assaying and refining practices, while coins and objects provide material evidence of skilled production.</p>
+      </article>
+      <article class="metal-card">
+        <div class="symbol">∴</div>
+        <h3 id="metalTechTitle">Techniques</h3>
+        <div class="native" id="metalTechSub">Dhātukarma · धातुकर्म</div>
+        <p class="card-desc" id="metalTechDesc">Smelting, casting, forging, alloying, annealing and quenching formed an interconnected body of practical knowledge.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2 class="title" id="ctaTitle">Ask the archive.</h2>
+  <p id="ctaLead">Explore the material history through a conversational research interface.</p>
+  <a class="btn" href="chat.html" id="ctaBtn">Start a Conversation</a>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <h3>DHĀTU</h3>
+        <div class="sub" id="footerSub">Ancient Indian Metallurgy</div>
+        <p id="footerDesc">A digital archive for exploring the materials, processes and technological traditions of ancient India.</p>
+      </div>
+      <div>
+        <h4 id="footerArchiveHead">Archive</h4>
+        <ul>
+          <li><a href="index.html" id="footerNavHome">Home</a></li>
+          <li><a href="#metallurgy" id="footerNavMetallurgy">Metallurgy</a></li>
+          <li><a href="chat.html" id="footerNavChat">Research Assistant</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 id="footerCollectionHead">Collection</h4>
+        <ul>
+          <li><a href="admin.html" id="footerNavAdmin">Add a Source</a></li>
+          <li><a href="#about" id="footerNavAbout">About DHĀTU</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom" id="footerBottom">DHĀTU · A digital research archive</div>
+  </div>
+</footer>
+
+<script>
+const TRANSLATIONS = {
+  hi: {
+    metaTitle: "धातु — प्राचीन भारतीय धातुकर्म",
+    metaDesc: "प्राचीन भारतीय धातुकर्म की खोज करने वाला एक इंटरैक्टिव अभिलेखागार।",
+    navSub: "प्राचीन भारतीय धातुकर्म",
+    navHome: "मुख्य पृष्ठ",
+    navMetallurgy: "धातुकर्म",
+    navChat: "शोध सहायक",
+    navAdmin: "अभिलेखागार",
+    heroEyebrow: "पदार्थ ज्ञान का अभिलेखागार",
+    heroTitle: "प्राचीन भारत में<br><em>धातुकर्म</em>",
+    heroCopy: "एक केंद्रित डिजिटल अभिलेखागार जो भारतीय उपमहाद्वीप के तकनीकी इतिहास को आकार देने वाली धातुओं, तकनीकों और परंपराओं की खोज करता है।",
+    heroTags: ["लोहा और इस्पात","तांबा और कांस्य","जस्ता (जिंक)","वूट्ज़","सोना और चांदी","प्रगलन"],
+    heroBtnExplore: "अभिलेखागार देखें",
+    heroBtnChat: "शोध सहायक खोलें",
+    storyKicker: "इतिहास",
+    storyTitle: "धातु में गढ़ी एक सभ्यता।",
+    storyP1: "भारतीय उपमहाद्वीप में खनन, प्रगलन, मिश्र धातु निर्माण, ढलाई और गढ़ाई का एक लंबा इतिहास रहा है। प्रारंभिक तांबे के काम से लेकर क्रूसिबल स्टील और जस्ता आसवन तक, धातुकर्म अभ्यास पीढ़ियों के अवलोकन और शिल्प के माध्यम से विकसित हुआ।",
+    storyP2: "DHĀTU इन परंपराओं को एक पठनीय शोध अभिलेखागार के रूप में एक साथ लाता है, जिससे आगंतुकों को सामग्री, प्रक्रियाओं और उनके पीछे के ऐतिहासिक साक्ष्यों का पता लगाने का अवसर मिलता है।",
+    storyQuote: "“किसी सभ्यता का इतिहास अक्सर उन सामग्रियों में पढ़ा जा सकता है जिन्हें उसने रूपांतरित करना सीखा।”",
+    statNum1: "4000+",
+    statLabel1: "उपमहाद्वीप में तांबा धातुकर्म के वर्ष",
+    statNum2: "वूट्ज़",
+    statLabel2: "भारतीय क्रूसिबल स्टील परंपरा",
+    statNum3: "जावर",
+    statLabel3: "ऐतिहासिक जस्ता उत्पादन का प्रमुख केंद्र",
+    statNum4: "लोहा",
+    statLabel4: "प्राचीन तकनीक की एक परिभाषित सामग्री",
+    archiveKicker: "अभिलेखागार",
+    archiveTitle: "सामग्री और परंपराएं",
+    archiveLead: "अभिलेखागार में प्रस्तुत प्रमुख सामग्रियों और तकनीकों का अन्वेषण करें।",
+    metalIronTitle: "लोहा",
+    metalIronSub: "Lauha · लोह",
+    metalIronDesc: "लोहा उत्पादन, गढ़ाई और संक्षारण प्रतिरोधी लौह स्तंभ परंपरा अयस्क, भट्टी की स्थितियों और प्रसंस्करण पर परिष्कृत नियंत्रण को दर्शाती है।",
+    metalWootzTitle: "वूट्ज़ स्टील",
+    metalWootzSub: "Ukku · उक्कू",
+    metalWootzDesc: "भारत में उत्पादित क्रूसिबल स्टील एक महत्वपूर्ण व्यापारिक सामग्री बन गई, जिसे इसकी विशिष्ट सूक्ष्म संरचना और मजबूती के लिए सराहा गया।",
+    metalCopperTitle: "तांबा और कांस्य",
+    metalCopperSub: "Tāmra · ताम्र",
+    metalCopperDesc: "प्रारंभिक तांबे के काम और बाद की मिश्र धातु परंपराओं ने औजारों, बर्तनों, आभूषणों, अनुष्ठान वस्तुओं और मूर्तियों को समृद्ध किया।",
+    metalZincTitle: "जस्ता (जिंक)",
+    metalZincSub: "Yashada · यशद",
+    metalZincDesc: "जावर की खदानें विशिष्ट रिटॉर्ट्स का उपयोग करके बड़े पैमाने पर जस्ता आसवन के महत्वपूर्ण साक्ष्य संरक्षित करती हैं।",
+    metalGoldTitle: "सोना और चांदी",
+    metalGoldSub: "Suvarna · Rūpya · सुवर्ण · रूप्य",
+    metalGoldDesc: "ऐतिहासिक ग्रंथ परीक्षण और शोधन प्रथाओं का वर्णन करते हैं, जबकि सिक्के और वस्तुएं कुशल उत्पादन के भौतिक साक्ष्य प्रदान करते हैं।",
+    metalTechTitle: "तकनीकें",
+    metalTechSub: "Dhātukarma · धातुकर्म",
+    metalTechDesc: "प्रगलन, ढलाई, गढ़ाई, मिश्र धातु निर्माण, तापानुशीतन और शमन ने व्यावहारिक ज्ञान का एक परस्पर जुड़ा हुआ रूप बनाया।",
+    ctaTitle: "अभिलेखागार से पूछें।",
+    ctaLead: "संवादात्मक शोध इंटरफ़ेस के माध्यम से धातु इतिहास का अन्वेषण करें।",
+    ctaBtn: "बातचीत शुरू करें",
+    footerSub: "प्राचीन भारतीय धातुकर्म",
+    footerDesc: "प्राचीन भारत की सामग्रियों, प्रक्रियाओं और तकनीकी परंपराओं की खोज के लिए एक डिजिटल अभिलेखागार।",
+    footerArchiveHead: "अभिलेखागार",
+    footerCollectionHead: "संग्रह",
+    footerNavAdmin: "स्रोत जोड़ें",
+    footerNavAbout: "DHĀTU के बारे में",
+    footerBottom: "DHĀTU · एक डिजिटल शोध अभिलेखागार"
+  },
+  en: {
+    metaTitle: "DHĀTU — Ancient Indian Metallurgy",
+    metaDesc: "An interactive archive exploring ancient Indian metallurgy.",
+    navSub: "Ancient Indian Metallurgy",
+    navHome: "Home",
+    navMetallurgy: "Metallurgy",
+    navChat: "Research Assistant",
+    navAdmin: "Archive",
+    heroEyebrow: "An Archive of Material Knowledge",
+    heroTitle: "Metallurgy in<br><em>Ancient India</em>",
+    heroCopy: "A focused digital archive exploring the metals, techniques and traditions that shaped the technological history of the Indian subcontinent.",
+    heroTags: ["Iron & Steel","Copper & Bronze","Zinc","Wootz","Gold & Silver","Smelting"],
+    heroBtnExplore: "Explore the Archive",
+    heroBtnChat: "Open Research Assistant",
+    storyKicker: "The Story",
+    storyTitle: "A civilisation forged in metal.",
+    storyP1: "The Indian subcontinent has a long record of mining, smelting, alloying, casting and forging. From early copper working to crucible steel and zinc distillation, metallurgical practice developed through generations of observation and craft.",
+    storyP2: "DHĀTU brings these traditions together as a readable research archive, giving visitors a place to explore the materials, processes and historical evidence behind them.",
+    storyQuote: "“The history of a civilisation can often be read in the materials it learned to transform.”",
+    statNum1: "4000+",
+    statLabel1: "Years of copper metallurgy in the subcontinent",
+    statNum2: "Wootz",
+    statLabel2: "Indian crucible steel tradition",
+    statNum3: "Zawar",
+    statLabel3: "Major centre of historic zinc production",
+    statNum4: "Iron",
+    statLabel4: "A defining material of ancient technology",
+    archiveKicker: "The Archive",
+    archiveTitle: "Materials & Traditions",
+    archiveLead: "Explore the principal materials and techniques represented in the archive.",
+    metalIronTitle: "Iron",
+    metalIronSub: "Lauha · लोह",
+    metalIronDesc: "Iron production, forging and the corrosion-resistant Iron Pillar tradition reveal sophisticated control of ore, furnace conditions and processing.",
+    metalWootzTitle: "Wootz Steel",
+    metalWootzSub: "Ukku",
+    metalWootzDesc: "Crucible steel produced in India became an important traded material, celebrated for its distinctive microstructure and performance.",
+    metalCopperTitle: "Copper & Bronze",
+    metalCopperSub: "Tāmra · ताम्र",
+    metalCopperDesc: "Early copper working and later alloying traditions supported tools, vessels, ornaments, ritual objects and sculpture.",
+    metalZincTitle: "Zinc",
+    metalZincSub: "Yashada · यशद",
+    metalZincDesc: "The mines of Zawar preserve important evidence for large-scale zinc distillation using specialised retorts.",
+    metalGoldTitle: "Gold & Silver",
+    metalGoldSub: "Suvarna · Rūpya",
+    metalGoldDesc: "Historical texts describe assaying and refining practices, while coins and objects provide material evidence of skilled production.",
+    metalTechTitle: "Techniques",
+    metalTechSub: "Dhātukarma · धातुकर्म",
+    metalTechDesc: "Smelting, casting, forging, alloying, annealing and quenching formed an interconnected body of practical knowledge.",
+    ctaTitle: "Ask the archive.",
+    ctaLead: "Explore the material history through a conversational research interface.",
+    ctaBtn: "Start a Conversation",
+    footerSub: "Ancient Indian Metallurgy",
+    footerDesc: "A digital archive for exploring the materials, processes and technological traditions of ancient India.",
+    footerArchiveHead: "Archive",
+    footerCollectionHead: "Collection",
+    footerNavAdmin: "Add a Source",
+    footerNavAbout: "About DHĀTU",
+    footerBottom: "DHĀTU · A digital research archive"
+  },
+  mr: {
+    metaTitle: "धातू — प्राचीन भारतीय धातुकर्म",
+    metaDesc: "प्राचीन भारतीय धातुकर्माचा अभ्यास करणारे डिजिटल संशोधन संग्रहालय.",
+    navSub: "प्राचीन भारतीय धातुकर्म",
+    navHome: "मुख्य पृष्ठ",
+    navMetallurgy: "धातुकर्म",
+    navChat: "संशोधन सहाय्यक",
+    navAdmin: "संग्रह",
+    heroEyebrow: "पदार्थ ज्ञानाचा संग्रह",
+    heroTitle: "प्राचीन भारतात<br><em>धातुकर्म</em>",
+    heroCopy: "भारतीय उपखंडाचा तांत्रिक इतिहास घडवणाऱ्या धातू, तंत्रज्ञान आणि परंपरांचा शोध घेणारा डिजिटल संग्रह.",
+    heroTags: ["लोखंड आणि पोलाद","तांबे आणि कांस्य","जस्त (झिंक)","वुट्झ","सोने आणि चांदी","वितळवणे"],
+    heroBtnExplore: "संग्रह पहा",
+    heroBtnChat: "संशोधन सहाय्यक उघडा",
+    storyKicker: "इतिहास",
+    storyTitle: "धातूमध्ये घडलेली एक संस्कृती.",
+    storyP1: "भारतीय उपखंडात खाणकाम, वितळवणे, मिश्रधातू निर्मिती आणि घडणीचा समृद्ध इतिहास आहे.",
+    storyP2: "DHĀTU या सर्व परंपरांना एका संशोधन संग्रहाच्या रूपात एकत्र आणते.",
+    storyQuote: "“एखाद्या संस्कृतीचा इतिहास तिने रूपांतरित केलेल्या पदार्थांवरून ओळखता येतो.”",
+    statNum1: "4000+",
+    statLabel1: "उपखंडातील तांबे धातुकर्माची वर्षे",
+    statNum2: "वुट्झ",
+    statLabel2: "भारतीय क्रूसिबल स्टील परंपरा",
+    statNum3: "जावर",
+    statLabel3: "ऐतिहासिक जस्त उत्पादनाचे प्रमुख केंद्र",
+    statNum4: "लोखंड",
+    statLabel4: "प्राचीन तंत्रज्ञानाचा पाया",
+    archiveKicker: "संग्रह",
+    archiveTitle: "साहित्य आणि परंपरा",
+    archiveLead: "संग्रहातील प्रमुख धातू आणि तंत्रज्ञानाचा शोध घ्या.",
+    metalIronTitle: "लोखंड",
+    metalIronSub: "Lauha · लोह",
+    metalIronDesc: "लोह उत्पादन, घडणी आणि गंज-प्रतिरोधक लोहस्तंभ परंपरा प्राचीन कौशल्याचे दर्शन घडवते.",
+    metalWootzTitle: "वुट्झ स्टील",
+    metalWootzSub: "Ukku · उक्कू",
+    metalWootzDesc: "भारतात तयार झालेले क्रूसिबल स्टील आपल्या अद्वितीय रचनेसाठी जगभर प्रसिद्ध होते.",
+    metalCopperTitle: "तांबे आणि कांस्य",
+    metalCopperSub: "Tāmra · ताम्र",
+    metalCopperDesc: "तांब्याचे सुरुवातीचे काम आणि मिश्रधातू परंपरांनी हत्यारे आणि शिल्पकलेला समृद्ध केले.",
+    metalZincTitle: "जस्त (झिंक)",
+    metalZincSub: "Yashada · यशद",
+    metalZincDesc: "जावरच्या खाणी मोठ्या प्रमाणावर जस्त शुद्धीकरणाचे पुरावे दर्शवतात.",
+    metalGoldTitle: "सोने आणि चांदी",
+    metalGoldSub: "Suvarna · Rūpya",
+    metalGoldDesc: "प्राचीन ग्रंथांमध्ये धातू शुद्धीकरणाचे नियम आणि नाण्यांचे पुरावे उपलब्ध आहेत.",
+    metalTechTitle: "तंत्रज्ञान",
+    metalTechSub: "Dhātukarma · धातुकर्म",
+    metalTechDesc: "वितळवणे, ओतकाम, घडणी आणि शमन हे सर्व व्यावहारिक ज्ञानाचा भाग होते.",
+    ctaTitle: "संग्रहाला विचारा.",
+    ctaLead: "संवादात्मक संशोधन प्रणालीद्वारे इतिहास जाणून घ्या.",
+    ctaBtn: "संभाषण सुरू करा",
+    footerSub: "प्राचीन भारतीय धातुकर्म",
+    footerDesc: "प्राचीन भारताच्या तांत्रिक परंपरांचा शोध घेणारा डिजिटल संग्रह.",
+    footerArchiveHead: "संग्रह",
+    footerCollectionHead: "विभाग",
+    footerNavAdmin: "दस्तऐवज जोडा",
+    footerNavAbout: "DHĀTU बद्दल",
+    footerBottom: "DHĀTU · डिजिटल संशोधन संग्रह"
+  },
+  fr: {
+    metaTitle: "DHĀTU — Métallurgie de l'Inde Ancienne",
+    metaDesc: "Une archive interactive explorant la métallurgie de l'Inde ancienne.",
+    navSub: "Métallurgie de l'Inde Ancienne",
+    navHome: "Accueil",
+    navMetallurgy: "Métallurgie",
+    navChat: "Assistant de Recherche",
+    navAdmin: "Archives",
+    heroEyebrow: "Une Archive du Savoir Matériel",
+    heroTitle: "La Métallurgie dans<br><em>l'Inde Ancienne</em>",
+    heroCopy: "Une archive numérique explorant les métaux, techniques et traditions qui ont façonné l'histoire technologique du sous-continent indien.",
+    heroTags: ["Fer & Acier","Cuivre & Bronze","Zinc","Wootz","Or & Argent","Fonte"],
+    heroBtnExplore: "Explorer l'Archive",
+    heroBtnChat: "Ouvrir l'Assistant",
+    storyKicker: "L'Histoire",
+    storyTitle: "Une civilisation forgée dans le métal.",
+    storyP1: "Le sous-continent indien possède une longue tradition d'extraction, de fonte, d'alliage et de forge.",
+    storyP2: "DHĀTU rassemble ces traditions sous forme d'une archive de recherche accessible.",
+    storyQuote: "“L'histoire d'une civilisation se lit souvent dans les matériaux qu'elle a appris à transformer.”",
+    statNum1: "4000+",
+    statLabel1: "Années de métallurgie du cuivre",
+    statNum2: "Wootz",
+    statLabel2: "Tradition indienne de l'acier au creuset",
+    statNum3: "Zawar",
+    statLabel3: "Centre historique de distillation du zinc",
+    statNum4: "Fer",
+    statLabel4: "Matériau emblématique des technologies anciennes",
+    archiveKicker: "Les Archives",
+    archiveTitle: "Matériaux & Traditions",
+    archiveLead: "Découvrez les principaux matériaux et techniques présentés dans l'archive.",
+    metalIronTitle: "Fer",
+    metalIronSub: "Lauha · Fer",
+    metalIronDesc: "La production et le célèbre pilier de fer résistant à la corrosion témoignent d'une grande maîtrise.",
+    metalWootzTitle: "Acier Wootz",
+    metalWootzSub: "Ukku",
+    metalWootzDesc: "L'acier au creuset produit en Inde était célèbre pour sa microstructure distinctive.",
+    metalCopperTitle: "Cuivre & Bronze",
+    metalCopperSub: "Tāmra · Cuivre",
+    metalCopperDesc: "Le travail du cuivre a permis la création d'outils, récipients et sculptures remarquables.",
+    metalZincTitle: "Zinc",
+    metalZincSub: "Yashada · Zinc",
+    metalZincDesc: "Les mines de Zawar conservent les preuves d'une distillation du zinc à grande échelle.",
+    metalGoldTitle: "Or & Argent",
+    metalGoldSub: "Suvarna · Rūpya",
+    metalGoldDesc: "Les textes historiques décrivent les procédés de raffinage et d'orfèvrerie.",
+    metalTechTitle: "Techniques",
+    metalTechSub: "Dhātukarma · Métallurgie",
+    metalTechDesc: "Fonte, moulage, forge, trempe et alliage formaient un savoir pratique interconnecté.",
+    ctaTitle: "Interrogez l'archive.",
+    ctaLead: "Explorez l'histoire matérielle à travers une interface conversationnelle.",
+    ctaBtn: "Démarrer une Conversation",
+    footerSub: "Métallurgie de l'Inde Ancienne",
+    footerDesc: "Une archive numérique pour explorer les traditions technologiques de l'Inde ancienne.",
+    footerArchiveHead: "Archives",
+    footerCollectionHead: "Collection",
+    footerNavAdmin: "Ajouter une Source",
+    footerNavAbout: "À propos de DHĀTU",
+    footerBottom: "DHĀTU · Archive numérique de recherche"
+  }
+};
+
+function applyLanguage(lang){
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.hi;
+  document.documentElement.lang = lang;
+  localStorage.setItem('dhatu_lang', lang);
+
+  document.title = t.metaTitle;
+  const metaDesc = document.getElementById('metaDesc');
+  if(metaDesc) metaDesc.content = t.metaDesc;
+
+  const setHtml = (id, val) => { const el = document.getElementById(id); if(el && val !== undefined) el.innerHTML = val; };
+  const setText = (id, val) => { const el = document.getElementById(id); if(el && val !== undefined) el.textContent = val; };
+
+  setText('navSub', t.navSub);
+  setText('navHome', t.navHome);
+  setText('navMetallurgy', t.navMetallurgy);
+  setText('navChat', t.navChat);
+  setText('navAdmin', t.navAdmin);
+
+  setText('drawerHome', t.navHome);
+  setText('drawerMetallurgy', t.navMetallurgy);
+  setText('drawerChat', t.navChat);
+  setText('drawerAdmin', t.navAdmin);
+
+  setText('heroEyebrow', t.heroEyebrow);
+  setHtml('heroTitle', t.heroTitle);
+  setText('heroCopy', t.heroCopy);
+  setText('heroBtnExplore', t.heroBtnExplore);
+  setText('heroBtnChat', t.heroBtnChat);
+
+  const heroTags = document.getElementById('heroTags');
+  if(heroTags && t.heroTags){
+    heroTags.innerHTML = t.heroTags.map(tag => `<span>${tag}</span>`).join('');
+  }
+
+  setText('storyKicker', t.storyKicker);
+  setText('storyTitle', t.storyTitle);
+  setText('storyP1', t.storyP1);
+  setText('storyP2', t.storyP2);
+  setText('storyQuote', t.storyQuote);
+  setText('statNum1', t.statNum1);
+  setText('statLabel1', t.statLabel1);
+  setText('statNum2', t.statNum2);
+  setText('statLabel2', t.statLabel2);
+  setText('statNum3', t.statNum3);
+  setText('statLabel3', t.statLabel3);
+  setText('statNum4', t.statNum4);
+  setText('statLabel4', t.statLabel4);
+
+  setText('archiveKicker', t.archiveKicker);
+  setText('archiveTitle', t.archiveTitle);
+  setText('archiveLead', t.archiveLead);
+
+  setText('metalIronTitle', t.metalIronTitle);
+  setText('metalIronSub', t.metalIronSub);
+  setText('metalIronDesc', t.metalIronDesc);
+
+  setText('metalWootzTitle', t.metalWootzTitle);
+  setText('metalWootzSub', t.metalWootzSub);
+  setText('metalWootzDesc', t.metalWootzDesc);
+
+  setText('metalCopperTitle', t.metalCopperTitle);
+  setText('metalCopperSub', t.metalCopperSub);
+  setText('metalCopperDesc', t.metalCopperDesc);
+
+  setText('metalZincTitle', t.metalZincTitle);
+  setText('metalZincSub', t.metalZincSub);
+  setText('metalZincDesc', t.metalZincDesc);
+
+  setText('metalGoldTitle', t.metalGoldTitle);
+  setText('metalGoldSub', t.metalGoldSub);
+  setText('metalGoldDesc', t.metalGoldDesc);
+
+  setText('metalTechTitle', t.metalTechTitle);
+  setText('metalTechSub', t.metalTechSub);
+  setText('metalTechDesc', t.metalTechDesc);
+
+  setText('ctaTitle', t.ctaTitle);
+  setText('ctaLead', t.ctaLead);
+  setText('ctaBtn', t.ctaBtn);
+
+  setText('footerSub', t.footerSub);
+  setText('footerDesc', t.footerDesc);
+  setText('footerArchiveHead', t.footerArchiveHead);
+  setText('footerCollectionHead', t.footerCollectionHead);
+  setText('footerNavHome', t.navHome);
+  setText('footerNavMetallurgy', t.navMetallurgy);
+  setText('footerNavChat', t.navChat);
+  setText('footerNavAdmin', t.footerNavAdmin);
+  setText('footerNavAbout', t.footerNavAbout);
+  setText('footerBottom', t.footerBottom);
+
+  const langSelect = document.getElementById('lang');
+  if(langSelect && langSelect.value !== lang) langSelect.value = lang;
+}
+
+function setupNavigation(page){
+  const links = document.querySelectorAll('.nav-links a');
+  links.forEach(a => { if(a.dataset.page === page) a.setAttribute('aria-current','page'); });
+  const h = document.getElementById('hamb'), d = document.getElementById('drawer');
+  h?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = d.classList.toggle('open');
+    h.setAttribute('aria-expanded', String(open));
+  });
+  d?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    d.classList.remove('open');
+    h?.setAttribute('aria-expanded', 'false');
+  }));
+  document.addEventListener('click', (e) => {
+    if(d && d.classList.contains('open') && !d.contains(e.target) && !h?.contains(e.target)){
+      d.classList.remove('open');
+      h?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  const langSelect = document.getElementById('lang');
+  const currentLang = localStorage.getItem('dhatu_lang') || 'hi';
+  if(langSelect) {
+    langSelect.value = currentLang;
+    langSelect.addEventListener('change', () => applyLanguage(langSelect.value));
+  }
+  applyLanguage(currentLang);
+}
+
+setupNavigation('home');
+</script>
+</body>
+</html>

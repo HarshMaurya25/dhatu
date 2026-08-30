@@ -1,11 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5455/ai?options=-c%20TimeZone%3DAsia%2FKolkata
-    username: ai
-    password: ai
+    url: ${URL_DATABASE}
+    username: postgres.hmsqylliuqfqkputilqw
+    password: ${PASSWORD_DATABASE}
     driver-class-name: org.postgresql.Driver
-    hikari:
-      connection-init-sql: SET TIME ZONE 'Asia/Kolkata'
 
   jpa:
     hibernate:
