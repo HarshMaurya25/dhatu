@@ -1,4 +1,4 @@
-﻿# DHĀTU
+# DHĀTU
 
 A full-stack web application and research archive on ancient Indian metallurgy, built with Spring Boot, Spring AI, pgvector, and a multilingual frontend.
 
@@ -9,6 +9,36 @@ DHĀTU is an interactive archive that documents the metallurgical history of anc
 2. **AI Research Chatbot**: A RAG-powered assistant that answers questions based on indexed reference papers using Spring AI and PostgreSQL pgvector.
 3. **Admin Upload**: An admin page protected by a passkey to upload new PDF documents into the vector store.
 4. **Multilingual Support**: Supports Hindi (default), English, Marathi, and French without needing page reloads.
+
+---
+
+## System Architecture & Flow
+
+### 1. ETL Ingestion Pipeline
+When documents (e.g., PDF research papers) are uploaded via the Admin Portal, they pass through an automated ETL (Extract, Transform, Load) pipeline before being stored in pgvector:
+
+![ETL Pipeline](documentation/ETL%20PIPELINE.png)
+
+1. **Upload**: PDF document is uploaded via `/ai/admin/upload`.
+2. **Document Reader (`PagePdfDocumentReader`)**: Parses the raw PDF into structured page-level document objects.
+3. **Document Transformer**: Cleans, refines, and formats document text and metadata.
+4. **Document Splitter (`TokenTextSplitter`)**: Chunks the document into optimized token windows.
+5. **Vector Embedding**: Uses Google Gemini (`gemini-embedding-001`) to generate 768-dimensional dense vector embeddings.
+6. **Vector Store**: Persists chunks and embeddings into PostgreSQL `pgvector` with HNSW indexing for fast similarity search.
+
+---
+
+### 2. RAG Query Flow
+When a user asks a question in the Research Chatbot, the retrieval and generation pipeline handles contextual enrichment and response streaming:
+
+![RAG Flow](documentation/RAG%20FLOW.png)
+
+1. **Question**: User submits a natural language question via `/ai/bot/ask`.
+2. **Chat History Advisor**: Loads and attaches conversational history from PostgreSQL for conversational context.
+3. **Rewrite Query Transformer**: The LLM rewrites the incoming query based on past history to form an independent, context-rich search prompt.
+4. **Vector Search & Embedding**: The rewritten query is embedded and matched against PostgreSQL `pgvector` using cosine similarity to retrieve the top-$k$ relevant document chunks.
+5. **Chat Client & LLM**: The user query and retrieved reference context are injected into the system prompt and sent to the LLM (`gpt-oss-120b`).
+6. **Output**: The answer is streamed back reactively to the frontend as a `Flux<String>`.
 
 ---
 
@@ -30,6 +60,9 @@ DHĀTU is an interactive archive that documents the metallurgical history of anc
 dhatu/
 ├── compose.yaml                      # Docker compose for postgres (pgvector) and adminer
 ├── Dockerfile                        # Docker buildfile for the Spring Boot app
+├── documentation/                    # Architecture diagrams (ETL & RAG flow)
+│   ├── ETL PIPELINE.png
+│   └── RAG FLOW.png
 ├── pom.xml                           # Dependencies & build setup
 ├── src/main/java/com/project/dhatu/
 │   ├── DhatuApplication.java         # Main Spring Boot entry point
