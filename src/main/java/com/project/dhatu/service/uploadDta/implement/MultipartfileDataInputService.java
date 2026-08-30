@@ -6,6 +6,7 @@ import com.project.dhatu.service.uploadDta.SplitterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,12 +24,13 @@ public class MultipartfileDataInputService implements DataInputService {
 
     private final ToDocumentService toDocumentService;
     private final SplitterService splitterService;
+    private final VectorStore vectorStore;
 
-    public MultipartfileDataInputService(ToDocumentService toDocumentService, SplitterService splitterService) {
+    public MultipartfileDataInputService(ToDocumentService toDocumentService, SplitterService splitterService, VectorStore vectorStore) {
         this.toDocumentService = toDocumentService;
         this.splitterService = splitterService;
+        this.vectorStore = vectorStore;
     }
-
 
     @Override
     public Boolean uploadPDF(MultipartFile pdf, String code) {
@@ -46,8 +48,7 @@ public class MultipartfileDataInputService implements DataInputService {
         List<Document> documents = toDocumentService.toDocument(pdf);
         List<Document> splitdocument = splitterService.splitDocument(documents);
 
-        System.out.println(splitdocument.toString());
-
+//        this.vectorStore.add(splitdocument);
         return null;
     }
 

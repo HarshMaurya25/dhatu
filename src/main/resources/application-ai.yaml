@@ -6,6 +6,11 @@ spring:
       chat:
         options:
           model: openai/gpt-oss-120b
+          temperature: 0.2
+          top-p: 0.9
+          max-tokens: 1024
+          frequency-penalty: 0.1
+          presence-penalty: 0.0
       embedding:
         enabled: false
 
