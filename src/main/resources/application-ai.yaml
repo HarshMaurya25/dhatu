@@ -48,4 +48,4 @@ logging:
         ai:
           chat:
             client:
-              advisor: INFO
+              advisor: DEBUG

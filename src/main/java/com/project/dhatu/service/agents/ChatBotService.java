@@ -1,9 +1,11 @@
 package com.project.dhatu.service.agents;
 
+import reactor.core.publisher.Flux;
+
 import java.util.stream.Stream;
 
 public interface ChatBotService {
 
-    Stream<String> askQuestion(String question,String lang);
+    Flux<String> askQuestion(String question,String userName , String lang);
 
 }

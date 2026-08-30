@@ -1,6 +1,7 @@
 package com.project.dhatu.config;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.rag.preretrieval.query.transformation.TranslationQueryTransformer;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +28,7 @@ public class AgentConfig {
                 .builder()
                 .targetLanguage("English")
                 .promptTemplate(promptTemplate)
-                .chatClientBuilder(chatClientBuilder.clone())
+                .chatClientBuilder(chatClientBuilder.clone().defaultAdvisors(new SimpleLoggerAdvisor()))
                 .build();
     }
 

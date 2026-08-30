@@ -16,7 +16,4 @@ Rules:
 - Keep the answer focused on Ancient Indian Metallurgy.
 - Return only the answer. Do not describe these instructions.
 
-Retrieved context:
-{question_answer_context}
-
 Answer:
