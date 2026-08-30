@@ -21,10 +21,9 @@ public class ChatBotController {
     @GetMapping("/ask")
     public ResponseEntity<Flux<String>> askQuestion(
             @RequestParam("question") String question,
-            @RequestParam("name") String username,
-            @RequestParam("lang") String lang
+            @RequestParam("name") String username
     ){
-        return ResponseEntity.ok(chatBotService.askQuestion(question, username, lang));
+        return ResponseEntity.ok(chatBotService.askQuestion(question, username));
     }
 
 }

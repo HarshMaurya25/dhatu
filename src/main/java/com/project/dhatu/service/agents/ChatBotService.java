@@ -6,6 +6,6 @@ import java.util.stream.Stream;
 
 public interface ChatBotService {
 
-    Flux<String> askQuestion(String question,String userName , String lang);
+    Flux<String> askQuestion(String question,String userName );
 
 }

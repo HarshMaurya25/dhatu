@@ -9,6 +9,7 @@ import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.rag.Query;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
@@ -17,11 +18,7 @@ import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.ai.chat.messages.Message;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,15 +49,17 @@ public class ChatClientImplement implements ChatClientService {
                         .builder()
                         .queryTransformers(
                                 query -> {
-                                    String historyText = query.history().stream()
+                                    String historyText = query.history()
+                                            .stream()
+                                            .filter(m -> m.getMessageType() == MessageType.USER)
                                             .map(m -> m.getMessageType() + ": " + m.getText())
                                             .collect(Collectors.joining("\n"));
 
                                     String enrichedText = historyText.isEmpty()
                                             ? query.text()
-                                            : "Conversation History:\n"
+                                            : "Conversation History:"
                                             + historyText
-                                            + "\n\nCurrent Query: " + query.text();
+                                            + "\nCurrent Query: " + query.text();
 
                                     return Query.builder()
                                             .text(enrichedText)
@@ -96,6 +95,7 @@ public class ChatClientImplement implements ChatClientService {
                         retrieverAdvisor.build(),
                         new SimpleLoggerAdvisor()
                 )
+                .defaultSystem(systemPrompt)
                 .build();
     }
 

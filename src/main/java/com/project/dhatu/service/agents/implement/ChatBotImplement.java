@@ -5,7 +5,6 @@ import com.project.dhatu.service.agents.ChatClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.rag.Query;
 import org.springframework.ai.rag.preretrieval.query.transformation.TranslationQueryTransformer;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -20,7 +19,7 @@ public class ChatBotImplement implements ChatBotService {
         this.chatClientService = chatClientService;
     }
 
-    public Flux<String> askQuestion(String question,String userName, String lang) {
+    public Flux<String> askQuestion(String question,String userName) {
         return chatClientService.getChatClient()
                 .prompt()
                 .advisors(
