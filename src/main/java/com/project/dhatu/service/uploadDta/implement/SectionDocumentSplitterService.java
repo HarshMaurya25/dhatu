@@ -5,6 +5,7 @@ import com.project.dhatu.service.uploadDta.SplitterService;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
+@Primary
 public class SectionDocumentSplitterService implements SplitterService {
     private final TokenSplitterConfig tokenSplitterConfig;
     private final TokenTextSplitter tokenTextSplitter;
