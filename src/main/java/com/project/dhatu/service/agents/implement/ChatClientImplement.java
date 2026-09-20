@@ -18,6 +18,8 @@ import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 @Service
 public class ChatClientImplement implements ChatClientService {
 
+    private static final Logger log = LoggerFactory.getLogger(ChatClientImplement.class);
     private final ChatClient chatClient;
 
     public ChatClientImplement(
@@ -115,6 +118,7 @@ public class ChatClientImplement implements ChatClientService {
                 .stream()
                 .content()
                 .timeout(Duration.ofSeconds(30))
+                .doOnError(e -> log.error("Error occurred while streaming AI response for conversationId: {}", conversationId, e))
                 .onErrorReturn("[The AI service is currently unavailable. Please try again.]");
     }
 }
