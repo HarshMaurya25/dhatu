@@ -4,7 +4,9 @@ import org.springframework.ai.model.google.genai.autoconfigure.chat.GoogleGenAiC
 import org.springframework.ai.model.openai.autoconfigure.OpenAiEmbeddingAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
+@ConfigurationPropertiesScan
 @SpringBootApplication(exclude = {
 		GoogleGenAiChatAutoConfiguration.class,
 		OpenAiEmbeddingAutoConfiguration.class

@@ -2,6 +2,7 @@ package com.project.dhatu.service.agents.implement;
 
 import com.project.dhatu.config.VectorStoreConfig;
 import com.project.dhatu.service.agents.ChatClientService;
+import com.project.dhatu.service.tools.DhatuTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -18,17 +19,22 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+
+import java.time.Duration;
 import java.util.stream.Collectors;
 
 @Service
 public class ChatClientImplement implements ChatClientService {
 
     private final ChatClient chatClient;
+
     public ChatClientImplement(
             ChatClient.Builder builder,
             ChatMemoryRepository chatMemoryRepository,
             VectorStore vectorStore,
             VectorStoreConfig vectorStoreConfig,
+            DhatuTools dhatuTools,
             @Value("classpath:query/SystemPrompt.st") Resource systemPrompt,
             @Value("classpath:query/RewriteQuery.st") Resource rewritePrompt,
             @Value("${chat.maxMessage}") int maxMessage
@@ -83,8 +89,8 @@ public class ChatClientImplement implements ChatClientService {
                                 VectorStoreDocumentRetriever
                                         .builder()
                                         .vectorStore(vectorStore)
-                                        .similarityThreshold(vectorStoreConfig.getSimilarityThreshold())
-                                        .topK(vectorStoreConfig.getTopK())
+                                        .similarityThreshold(vectorStoreConfig.similarityThreshold())
+                                        .topK(vectorStoreConfig.topK())
                                         .build()
                         )
                         .order(2);
@@ -96,11 +102,19 @@ public class ChatClientImplement implements ChatClientService {
                         new SimpleLoggerAdvisor()
                 )
                 .defaultSystem(systemPrompt)
+                .defaultTools(dhatuTools)
                 .build();
     }
 
     @Override
-    public ChatClient getChatClient() {
-        return chatClient;
+    public Flux<String> streamResponse(String question, String conversationId) {
+        return chatClient
+                .prompt()
+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, conversationId))
+                .user(question)
+                .stream()
+                .content()
+                .timeout(Duration.ofSeconds(30))
+                .onErrorReturn("[The AI service is currently unavailable. Please try again.]");
     }
 }

@@ -21,14 +21,6 @@ public class CorsConfig {
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
-
-            @Override
-            public void addViewControllers(org.springframework.web.servlet.config.annotation.ViewControllerRegistry registry) {
-                registry.addViewController("/").setViewName("forward:/index.html");
-                registry.addViewController("/home").setViewName("forward:/index.html");
-                registry.addViewController("/chat").setViewName("forward:/chat.html");
-                registry.addViewController("/admin").setViewName("forward:/admin.html");
-            }
         };
     }
 }

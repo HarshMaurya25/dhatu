@@ -1,9 +1,9 @@
 package com.project.dhatu.service.agents;
 
-import org.springframework.ai.chat.client.ChatClient;
+import reactor.core.publisher.Flux;
 
 public interface ChatClientService {
 
-    ChatClient getChatClient();
+    Flux<String> streamResponse(String question, String conversationId);
 
 }
