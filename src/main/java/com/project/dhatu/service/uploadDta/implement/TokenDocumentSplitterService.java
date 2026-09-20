@@ -11,22 +11,20 @@ import java.util.List;
 @Service
 public class TokenDocumentSplitterService implements SplitterService {
 
-    private final TokenSplitterConfig tokenSplitterConfig;
-    public TokenDocumentSplitterService(TokenSplitterConfig tokenSplitterConfig) {
-        this.tokenSplitterConfig = tokenSplitterConfig;
+    private final TokenTextSplitter tokenTextSplitter;
+
+    public TokenDocumentSplitterService(TokenSplitterConfig config) {
+        this.tokenTextSplitter = TokenTextSplitter.builder()
+                .withChunkSize(config.chunkSize())
+                .withMinChunkSizeChars(config.minChunkSizeChars())
+                .withMinChunkLengthToEmbed(config.minChunkLengthToEmbed())
+                .withMaxNumChunks(config.maxNumChunks())
+                .withKeepSeparator(config.keepSeparator())
+                .build();
     }
 
     @Override
     public List<Document> splitDocument(List<Document> documents) {
-        TokenTextSplitter textSplitter = TokenTextSplitter
-                .builder()
-                .withChunkSize(tokenSplitterConfig.getChunkSize())
-                .withMinChunkSizeChars(tokenSplitterConfig.getMinChunkSizeChars())
-                .withMinChunkLengthToEmbed(tokenSplitterConfig.getMinChunkLengthToEmbed())
-                .withMaxNumChunks(tokenSplitterConfig.getMaxNumChunks())
-                .withKeepSeparator(tokenSplitterConfig.isKeepSeparator())
-                .build();
-
-        return textSplitter.split(documents);
+        return tokenTextSplitter.split(documents);
     }
 }

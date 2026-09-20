@@ -5,14 +5,18 @@ import com.project.dhatu.service.uploadDta.SplitterService;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Service
 public class SectionDocumentSplitterService implements SplitterService {
     private final TokenSplitterConfig tokenSplitterConfig;
+    private final TokenTextSplitter tokenTextSplitter;
 
     private static final Pattern SECTION_PATTERN = Pattern.compile(
             "(?=\\d+\\.\\d+\\s+[A-Z])",
@@ -21,6 +25,13 @@ public class SectionDocumentSplitterService implements SplitterService {
 
     public SectionDocumentSplitterService(TokenSplitterConfig tokenSplitterConfig) {
         this.tokenSplitterConfig = tokenSplitterConfig;
+        this.tokenTextSplitter = TokenTextSplitter.builder()
+                .withChunkSize(tokenSplitterConfig.chunkSize())
+                .withMinChunkSizeChars(tokenSplitterConfig.minChunkSizeChars())
+                .withMinChunkLengthToEmbed(tokenSplitterConfig.minChunkLengthToEmbed())
+                .withMaxNumChunks(tokenSplitterConfig.maxNumChunks())
+                .withKeepSeparator(tokenSplitterConfig.keepSeparator())
+                .build();
     }
 
     @Override
@@ -29,16 +40,7 @@ public class SectionDocumentSplitterService implements SplitterService {
                 .flatMap(doc -> splitIntoSections(doc).stream())
                 .collect(Collectors.toList());
 
-        TokenTextSplitter textSplitter = TokenTextSplitter
-                .builder()
-                .withChunkSize(tokenSplitterConfig.getChunkSize())
-                .withMinChunkSizeChars(tokenSplitterConfig.getMinChunkSizeChars())
-                .withMinChunkLengthToEmbed(tokenSplitterConfig.getMinChunkLengthToEmbed())
-                .withMaxNumChunks(tokenSplitterConfig.getMaxNumChunks())
-                .withKeepSeparator(tokenSplitterConfig.isKeepSeparator())
-                .build();
-
-        return textSplitter.split(sectionChunks);
+        return tokenTextSplitter.split(sectionChunks);
     }
 
     private List<Document> splitIntoSections(Document document) {
@@ -47,7 +49,7 @@ public class SectionDocumentSplitterService implements SplitterService {
 
         List<Document> result = new ArrayList<>();
         StringBuilder currentChunk = new StringBuilder();
-        int maxChars = tokenSplitterConfig.getChunkSize() * 4;
+        int maxChars = tokenSplitterConfig.chunkSize() * 4;
 
         for (String section : sections) {
             if (isJunk(section)) continue;

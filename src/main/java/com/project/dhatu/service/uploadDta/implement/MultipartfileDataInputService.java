@@ -35,6 +35,8 @@ public class MultipartfileDataInputService implements DataInputService {
         this.whitespaceCleanerTransformer = whitespaceCleanerTransformer;
     }
 
+    private static final String PDF_CONTENT_TYPE = "application/pdf";
+
     @Override
     public Boolean uploadPDF(MultipartFile pdf, String code) {
 
@@ -44,20 +46,18 @@ public class MultipartfileDataInputService implements DataInputService {
             return Boolean.FALSE;
         }
 
-        if (pdf.isEmpty() || Objects.equals(pdf.getContentType(), "pdf")){
+        if (pdf.isEmpty() || !PDF_CONTENT_TYPE.equals(pdf.getContentType())) {
             return Boolean.FALSE;
         }
+
+        log.info("Processing PDF: name={}, size={} bytes", pdf.getOriginalFilename(), pdf.getSize());
 
         List<Document> documents = toDocumentService.toDocument(pdf);
         documents = whitespaceCleanerTransformer.transform(documents);
         List<Document> splitdocument = splitterService.splitDocument(documents);
 
         this.vectorStore.add(splitdocument);
-        System.out.println("Length is " + splitdocument.size());
-        splitdocument.forEach(x -> {
-            System.out.println("-----------------------------------------");
-            System.out.println(x.getText());
-        });
+        log.info("Stored {} chunks for file '{}'", splitdocument.size(), pdf.getOriginalFilename());
 
         return Boolean.TRUE;
     }

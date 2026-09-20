@@ -1,11 +1,12 @@
 package com.project.dhatu.config;
+
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentTransformer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DataRefractorConfig {
+public class DataRefactorConfig {
 
     @Bean
     public DocumentTransformer whitespaceCleanerTransformer() {
